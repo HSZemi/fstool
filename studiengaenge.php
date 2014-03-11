@@ -6,6 +6,7 @@ include 'lib/db.php';
 
 $link = db_connect();
 
+$alert = '';
 
 if(isset($_POST['id'])){
 	$studiengang_id = intval($_POST['id']);
@@ -14,25 +15,75 @@ if(isset($_POST['id'])){
 	if(isset($_POST['assign'])){
 		// Fachschaft zuweisen
 		$fsid = intval($_POST['new_fsid']);
-		assign_fs_to_studiengang($fsid, $studiengang_id);
+		if(assign_fs_to_studiengang($fsid, $studiengang_id)){
+			$alert = "		<div class='alert alert-success alert-dismissable'>
+			<button type='button' class='close' data-dismiss='alert' aria-hidden='true'>&times;</button>
+			Der Studiengang wurde erfolgreich zugeordnet.
+		</div>";
+		} else {
+			$alert = "		<div class='alert alert-danger alert-dismissable'>
+			<button type='button' class='close' data-dismiss='alert' aria-hidden='true'>&times;</button>
+			<strong>Fehler!</strong> Der Studiengang mit der ID '$studiengang_id' konnte nicht der Fachschaft mit der ID '$fsid' zugeordnet werden. Besteht diese Zuordnung evtl. bereits?
+		</div>";
+		}
 		
 	} elseif(isset($_POST['rename'])) {
 		// Studiengang umbenennen
 		$newname = validate_string_for_mysql_html($_POST['inputNewname']);
-		rename_studiengang($studiengang_id, $newname);
+		if(rename_studiengang($studiengang_id, $newname)){
+			$alert = "		<div class='alert alert-warning alert-dismissable'>
+			<button type='button' class='close' data-dismiss='alert' aria-hidden='true'>&times;</button>
+			Der Studiengang wurde in <strong>$newname</strong> umbenannt.
+		</div>";
+		} else {
+			$alert = "		<div class='alert alert-danger alert-dismissable'>
+			<button type='button' class='close' data-dismiss='alert' aria-hidden='true'>&times;</button>
+			<strong>Fehler!</strong> Der Studiengang konnte nicht in '$newname' umbenannt werden. Eventuell existiert bereits ein Studiengang mit diesem Namen?
+		</div>";
+		}
 		
 	} elseif(isset($_POST['delete'])){
 		// Studiengang löschen
-		delete_studiengang($studiengang_id);
+		if(delete_studiengang($studiengang_id)){
+			$alert = "		<div class='alert alert-warning alert-dismissable'>
+			<button type='button' class='close' data-dismiss='alert' aria-hidden='true'>&times;</button>
+			Der Studiengang mit der ID <strong>$studiengang_id</strong> wurde gelöscht.
+		</div>";
+		} else {
+			$alert = "		<div class='alert alert-danger alert-dismissable'>
+			<button type='button' class='close' data-dismiss='alert' aria-hidden='true'>&times;</button>
+			<strong>Fehler!</strong> Der Studiengang mit der ID '$studiengang_id' konnte nicht gelöscht werden. Möglicherweise ist er noch einer Fachschaft zugeordnet?
+		</div>";
+		}
 	} elseif(isset($_POST['fs_to_delete'])){
 		// FS entfernen
 		$fsid = intval($_POST['fs_to_delete']);
-		unjoin_fs_and_studiengang($fsid, $studiengang_id);
+		if(unjoin_fs_and_studiengang($fsid, $studiengang_id)){
+			$alert = "		<div class='alert alert-success alert-dismissable'>
+			<button type='button' class='close' data-dismiss='alert' aria-hidden='true'>&times;</button>
+			Die Zuordnung wurde erfolgreich aufgehoben.
+		</div>";
+		} else {
+			$alert = "		<div class='alert alert-danger alert-dismissable'>
+			<button type='button' class='close' data-dismiss='alert' aria-hidden='true'>&times;</button>
+			<strong>Fehler!</strong> Die Zuordnung vom Studiengang mit der ID '$studiengang_id' zur Fachschaft mit der ID '$fsid' konnte nicht aufgehoben werden.
+		</div>";
+		}
 	}
 } elseif(isset($_POST['createnewstudiengang'])){
 	// neuen Studiengang erstellen
 	$name = validate_string_for_mysql_html($_POST['inputStudiengangname']);
-	add_studiengang($name);
+	if(add_studiengang($name)){
+		$alert = "		<div class='alert alert-success alert-dismissable'>
+			<button type='button' class='close' data-dismiss='alert' aria-hidden='true'>&times;</button>
+			Neuer Studiengang <strong>$name</strong> wurde angelegt.
+		</div>";
+	} else {
+		$alert = "		<div class='alert alert-danger alert-dismissable'>
+			<button type='button' class='close' data-dismiss='alert' aria-hidden='true'>&times;</button>
+			<strong>Fehler!</strong> Studiengang '$name' konnte nicht angelegt werden. Möglicherweise existiert bereits ein Studiengang mit diesem Namen?
+		</div>";
+	}
 }
 
 ?>
@@ -122,7 +173,12 @@ if(isset($_POST['id'])){
         </div><!--/.container-fluid -->
       </div>
       
+      
       <?php 
+	
+	echo $alert;
+	
+	
       $fs_select_list = get_fs_select_list();
       
 	$query = "SELECT ID, name FROM ".DB_PREF."studiengaenge ORDER BY name ASC;";

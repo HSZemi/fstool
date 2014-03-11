@@ -123,7 +123,7 @@ function assign_fs_to_studiengang($fsid, $studiengang_id){
 	$fsid = intval($fsid);
 	$studiengang_id = intval($studiengang_id);
 	$query = "INSERT INTO ".DB_PREF."zuordnung(fachschaft, studiengang) VALUES ($fsid, $studiengang_id);";
-	$result = mysql_query($query) or die("assign_fs_to_studiengang: Anfrage fehlgeschlagen: " . mysql_error());
+	$result = mysql_query($query);
 	if($result){
 		return true;
 	} else {
@@ -135,7 +135,7 @@ function assign_fs_to_studiengang($fsid, $studiengang_id){
 function rename_studiengang($id, $newname){
 	$id = intval($id);
 	$query = "UPDATE ".DB_PREF."studiengaenge SET name='$newname' WHERE ID = $id;";
-	$result = mysql_query($query) or die("rename_studiengang: Anfrage fehlgeschlagen: " . mysql_error());
+	$result = mysql_query($query);
 	if($result){
 		return true;
 	} else {
@@ -146,7 +146,7 @@ function rename_studiengang($id, $newname){
 function rename_fs($fsid, $newname){
 	$fsid = intval($fsid);
 	$query = "UPDATE ".DB_PREF."fachschaften SET name='$newname' WHERE ID = $fsid;";
-	$result = mysql_query($query) or die("rename_fs: Anfrage fehlgeschlagen: " . mysql_error());
+	$result = mysql_query($query);
 	if($result){
 		return true;
 	} else {
@@ -158,7 +158,7 @@ function unjoin_fs_and_studiengang($fsid, $studiengang_id){
 	$fsid = intval($fsid);
 	$studiengang_id = intval($studiengang_id);
 	$query = "DELETE FROM ".DB_PREF."zuordnung WHERE fachschaft=$fsid and studiengang=$studiengang_id;";
-	$result = mysql_query($query) or die("unjoin_fs_and_studiengang: Anfrage fehlgeschlagen: " . mysql_error());
+	$result = mysql_query($query);
 	if($result){
 		return true;
 	} else {
@@ -169,7 +169,7 @@ function unjoin_fs_and_studiengang($fsid, $studiengang_id){
 
 function add_fs($name){
 	$query = "INSERT INTO ".DB_PREF."fachschaften(name) VALUES ('$name')";
-	$result = mysql_query($query) or die("add_fs: Anfrage fehlgeschlagen: " . mysql_error());
+	$result = mysql_query($query);
 	if($result){
 		return true;
 	} else {
@@ -180,7 +180,7 @@ function add_fs($name){
 
 function add_studiengang($name){
 	$query = "INSERT INTO ".DB_PREF."studiengaenge(name) VALUES ('$name')";
-	$result = mysql_query($query) or die("add_studiengang: Anfrage fehlgeschlagen: " . mysql_error());
+	$result = mysql_query($query);
 	if($result){
 		return true;
 	} else {

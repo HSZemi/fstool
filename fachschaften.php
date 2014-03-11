@@ -13,24 +13,74 @@ if(isset($_POST['fsid'])){
 	if(isset($_POST['assign'])){
 		// Fachschaft zuweisen
 		$studiengang_id = intval($_POST['new_studiengangid']);
-		assign_fs_to_studiengang($fsid, $studiengang_id);
+		if(assign_fs_to_studiengang($fsid, $studiengang_id)){
+			$alert = "		<div class='alert alert-success alert-dismissable'>
+			<button type='button' class='close' data-dismiss='alert' aria-hidden='true'>&times;</button>
+			Die Fachschaft wurde erfolgreich zugeordnet.
+		</div>";
+		} else {
+			$alert = "		<div class='alert alert-danger alert-dismissable'>
+			<button type='button' class='close' data-dismiss='alert' aria-hidden='true'>&times;</button>
+			<strong>Fehler!</strong> Die Fachschaft mit der ID '$fsid' konnte nicht dem Studiengang mit der ID '$studiengang_id' zugeordnet werden. Besteht diese Zuordnung evtl. bereits?
+		</div>";
+		}
 		
 	} elseif(isset($_POST['rename'])) {
 		// Studiengang umbenennen
 		$newname = validate_string_for_mysql_html($_POST['inputNewname']);
-		rename_fs($fsid, $newname);
+		if(rename_fs($fsid, $newname)){
+			$alert = "		<div class='alert alert-warning alert-dismissable'>
+			<button type='button' class='close' data-dismiss='alert' aria-hidden='true'>&times;</button>
+			Die Fachschaft wurde in <strong>$newname</strong> umbenannt.
+		</div>";
+		} else {
+			$alert = "		<div class='alert alert-danger alert-dismissable'>
+			<button type='button' class='close' data-dismiss='alert' aria-hidden='true'>&times;</button>
+			<strong>Fehler!</strong> Die Fachschaft konnte nicht in '$newname' umbenannt werden. Eventuell existiert bereits eine Fachschaft mit diesem Namen?
+		</div>";
+		}
 		
 	} elseif(isset($_POST['delete'])){
 		// Studiengang löschen
-		delete_fs($fsid);
+		if(delete_fs($fsid)){
+			$alert = "		<div class='alert alert-warning alert-dismissable'>
+			<button type='button' class='close' data-dismiss='alert' aria-hidden='true'>&times;</button>
+			Die Fachschaft mit der ID <strong>$fsid</strong> wurde gelöscht.
+		</div>";
+		} else {
+			$alert = "		<div class='alert alert-danger alert-dismissable'>
+			<button type='button' class='close' data-dismiss='alert' aria-hidden='true'>&times;</button>
+			<strong>Fehler!</strong> Die Fachschaft mit der ID '$fsid' konnte nicht gelöscht werden. Möglicherweise ist ihr noch ein Studiengang zugeordnet?
+		</div>";
+		}
 	} elseif(isset($_POST['studiengang_to_delete'])){
 		// Studiengang entfernen
 		$studiengang_id = intval($_POST['studiengang_to_delete']);
-		unjoin_fs_and_studiengang($fsid, $studiengang_id);
+		if(unjoin_fs_and_studiengang($fsid, $studiengang_id)){
+			$alert = "		<div class='alert alert-success alert-dismissable'>
+			<button type='button' class='close' data-dismiss='alert' aria-hidden='true'>&times;</button>
+			Die Zuordnung wurde erfolgreich aufgehoben.
+		</div>";
+		} else {
+			$alert = "		<div class='alert alert-danger alert-dismissable'>
+			<button type='button' class='close' data-dismiss='alert' aria-hidden='true'>&times;</button>
+			<strong>Fehler!</strong> Die Zuordnung von der Fachschaft mit der ID '$fsid' zum Studiengang mit der ID '$studiengang_id' konnte nicht aufgehoben werden.
+		</div>";
+		}
 	}
 } elseif(isset($_POST['add_fs'])){
 	$fsname = validate_string_for_mysql_html($_POST['inputFSName']);
-	add_fs($fsname);
+	if(add_fs($fsname)){
+		$alert = "		<div class='alert alert-success alert-dismissable'>
+			<button type='button' class='close' data-dismiss='alert' aria-hidden='true'>&times;</button>
+			Neue Fachschaft <strong>$fsname</strong> wurde angelegt.
+		</div>";
+	} else {
+		$alert = "		<div class='alert alert-danger alert-dismissable'>
+			<button type='button' class='close' data-dismiss='alert' aria-hidden='true'>&times;</button>
+			<strong>Fehler!</strong> Fachschaft '$fsname' konnte nicht angelegt werden. Möglicherweise existiert bereits eine Fachschaft mit diesem Namen?
+		</div>";
+	}
 }
 
 ?>
@@ -110,6 +160,9 @@ if(isset($_POST['fsid'])){
       </div>
       
       <?php 
+      
+	echo $alert;
+	
       
       $studiengang_select_list = get_studiengang_select_list();
       
