@@ -60,17 +60,24 @@ include 'lib/db.php';
               <span class="icon-bar"></span>
               <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" href="#">fstool</a>
+            <a class="navbar-brand" href="index.php">fstool</a>
           </div>
           <div class="navbar-collapse collapse">
             <ul class="nav navbar-nav">
-              <li><a href="index.php">Fachschaften</a></li>
+              <li><a href="fachschaften.php">Fachschaften</a></li>
               <li><a href="studiengaenge.php">Studiengänge</a></li>
               <li class="active"><a href="probleme.php">Probleme</a></li>
             </ul>
-            <ul class="nav navbar-nav navbar-right">
-              <li class=""><a href="./">Einstellungen</a></li>
-            </ul>
+			
+		<ul class="nav navbar-nav navbar-right">
+			<li class="dropdown">
+				<a href="#" class="dropdown-toggle" data-toggle="dropdown">Markdown <b class="caret"></b></a>
+				<ul class="dropdown-menu">
+					<li><a href="md-fachschaften.php" target="_blank">Fachschaften</a></li>
+					<li><a href="md-studiengaenge.php" target="_blank">Studiengänge</a></li>
+				</ul>
+			</li>
+		</ul>
           </div><!--/.nav-collapse -->
         </div><!--/.container-fluid -->
       </div>
@@ -94,7 +101,7 @@ include 'lib/db.php';
 				$id		= $row['ID'];
 				$name		= $row['name'];
 				
-				echo '<a class="list-group-item" href="index.php#'.$id.'">'.$name.'</a>
+				echo '<a class="list-group-item" href="fachschaften.php#'.$id.'">'.$name.'</a>
 				';
 			}
 				

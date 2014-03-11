@@ -6,32 +6,22 @@ include 'lib/db.php';
 
 $link = db_connect();
 
-if(isset($_POST['fsid'])){
-	$fsid = intval($_POST['fsid']);
+$fs_count = -1;
+$studiengaenge_count = -1;
 
-
-	if(isset($_POST['assign'])){
-		// Fachschaft zuweisen
-		$studiengang_id = intval($_POST['new_studiengangid']);
-		assign_fs_to_studiengang($fsid, $studiengang_id);
-		
-	} elseif(isset($_POST['rename'])) {
-		// Studiengang umbenennen
-		$newname = validate_string_for_mysql_html($_POST['inputNewname']);
-		rename_fs($fsid, $newname);
-		
-	} elseif(isset($_POST['delete'])){
-		// Studiengang löschen
-		delete_fs($fsid);
-	} elseif(isset($_POST['studiengang_to_delete'])){
-		// Studiengang entfernen
-		$studiengang_id = intval($_POST['studiengang_to_delete']);
-		unjoin_fs_and_studiengang($fsid, $studiengang_id);
-	}
-} elseif(isset($_POST['add_fs'])){
-	$fsname = validate_string_for_mysql_html($_POST['inputFSName']);
-	add_fs($fsname);
+$query = "SELECT COUNT(ID) AS count FROM ".DB_PREF."fachschaften;";
+$result = mysql_query($query) or die("count_fachschaften: Anfrage fehlgeschlagen: " . mysql_error());
+if($row = mysql_fetch_array($result)){
+	$fs_count	= intval($row['count']);
 }
+
+$query = "SELECT COUNT(ID) AS count FROM ".DB_PREF."studiengaenge;";
+$result = mysql_query($query) or die("count_studiengaenge: Anfrage fehlgeschlagen: " . mysql_error());
+if($row = mysql_fetch_array($result)){
+	$studiengaenge_count	= intval($row['count']);
+}
+
+ db_close($link);
 
 ?>
 <!DOCTYPE html>
@@ -80,111 +70,45 @@ if(isset($_POST['fsid'])){
               <span class="icon-bar"></span>
               <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" href="#">fstool</a>
+            <a class="navbar-brand" href="index.php">fstool</a>
           </div>
           <div class="navbar-collapse collapse">
             <ul class="nav navbar-nav">
-              <li class="active"><a href="index.php">Fachschaften</a></li>
+              <li><a href="fachschaften.php">Fachschaften</a></li>
               <li><a href="studiengaenge.php">Studiengänge</a></li>
               <li><a href="probleme.php">Probleme</a></li>
             </ul>
-            
-		<form class="navbar-form navbar-left" role="form" id="newfsform" action="index.php" method="post">
-			<div class="form-group">
-				<input type="text" class="form-control" name="inputFSName" placeholder="Neue Fachschaft">
-			<button type="submit" name="add_fs" class="btn btn-default">Hinzufügen</button>
-			</div>
-		</form>
 			
-            <ul class="nav navbar-nav navbar-right">
-              <li class=""><a href="./">Einstellungen</a></li>
-            </ul>
+		<ul class="nav navbar-nav navbar-right">
+			<li class="dropdown">
+				<a href="#" class="dropdown-toggle" data-toggle="dropdown">Markdown <b class="caret"></b></a>
+				<ul class="dropdown-menu">
+					<li><a href="md-fachschaften.php" target="_blank">Fachschaften</a></li>
+					<li><a href="md-studiengaenge.php" target="_blank">Studiengänge</a></li>
+				</ul>
+			</li>
+		</ul>
           </div><!--/.nav-collapse -->
         </div><!--/.container-fluid -->
       </div>
       
-      <?php 
-      
-      $studiengang_select_list = get_studiengang_select_list();
-      
-      $query = "SELECT ID, name, satzung FROM ".DB_PREF."fachschaften ORDER BY name ASC;";
-      $result = mysql_query($query) or die("get_all_fs: Anfrage fehlgeschlagen: " . mysql_error());
-      while($row = mysql_fetch_array($result)){
-            $fsid		= $row['ID'];
-            $fsname	= $row['name'];
-            $satzung	= $row['satzung'];
-            
-            echo '	<div class="panel panel-primary">
-		<div class="panel-heading">
-			<h3 class="panel-title" id="'.$fsid.'"><a href="#'.$fsid.'"><span class="glyphicon glyphicon-tag"></span>
-</a> '.$fsname.'</h3>
-		</div>
-		<div class="panel-body">
-		';
-		
-		/*if($satzung != ''){
-			echo '	<p><a class="btn btn-success" href="'.$satzung.'">Satzung herunterladen</a></p>
-		';
-		} else {
-			echo '	<p><a class="btn btn-warning" disabled="disabled" href="#">keine Satzung vorhanden</a></p>
-		';
-		}*/
-		
-		echo '		<form class="" role="form" action="index.php#'.$fsid.'" method="post">
-			<input type="hidden" name="fsid" value="'.$fsid.'" />
-			<div class="list-group">
-				';
-            
-            $studiengaenge = get_studiengaenge_for_fs($fsid);
-		if(!$studiengaenge){
-		echo '<a class="list-group-item list-group-item-warning"">Diese Fachschaft vertritt keinen Studiengang.</a>
-		';
-		} else {
-			echo '<a class="list-group-item list-group-item-success"><b>Studiengänge</b></a>
-			';
-			foreach($studiengaenge as $row){
-				echo '<a class="list-group-item" href="studiengaenge.php#'.$row['ID'].'">'.$row['name'].' <button class="close" type="submit" name="studiengang_to_delete" value="'.$row['ID'].'" title="Diesen Studiengang entfernen">&times;</button></a>
-				';
-			}
-		}
-		echo '</div>
-		</form>
-		<form class="form-inline" role="form" action="index.php#'.$fsid.'" method="post">
-			<input type="hidden" name="fsid" value="'.$fsid.'" />
-			<div class="col-lg-5">
-				<div class="input-group">
-					<select class="form-control" name="new_studiengangid">
-						'.$studiengang_select_list.'
-					</select>
-					<span class="input-group-btn">
-						<button class="btn btn-default" type="submit" name="assign">Zuweisen</button>
-					</span>
-				</div>
-			</div>
-			<div class="col-lg-5">
-				<div class="input-group">
-					<label class="sr-only" for="inputNewname">Umbenennen</label>
-					<input type="text" class="form-control" id="inputNewname" name="inputNewname" placeholder="Neuer Name">
-					<span class="input-group-btn">
-						<button class="btn btn-default" type="submit" name="rename">Umbenennen</button>
-					</span>
-				</div><!-- /input-group -->
-			</div>
-			<button type="submit" class="btn btn-danger" name="delete">Fachschaft Löschen</button>
-		</form>
-		</div>
-	</div>
+      <div class="container">
+
+	<!-- Main component for a primary marketing message or call to action -->
+	<div class="jumbotron">
 	
-	';
-      }
-      
-      
-      ?>
-      
-      
-      <?php
-      db_close($link);
-      ?>
+	
+		<h1>fstool <small>Übersicht</small></h1>
+		<p>fstool ist ein Tool zur Verwaltung von Fachschaften der RFWU Bonn.</p>
+		
+		<div id="alert"></div>
+
+       
+		<?php echo "<p>Derzeit sind <a href='fachschaften.php' class='btn btn-info'><span class='badge'>$fs_count</span> Fachschaften</a> und <a href='studiengaenge.php' class='btn btn-success'><span class='badge'>$studiengaenge_count</span> Studiengänge</a> eingetragen.</p>"; ?>
+
+	</div>
+
+	</div> <!-- /container -->
 
     </div> <!-- /container -->
 

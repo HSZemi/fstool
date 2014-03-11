@@ -6,33 +6,31 @@ include 'lib/db.php';
 
 $link = db_connect();
 
-
-if(isset($_POST['id'])){
-	$studiengang_id = intval($_POST['id']);
+if(isset($_POST['fsid'])){
+	$fsid = intval($_POST['fsid']);
 
 
 	if(isset($_POST['assign'])){
 		// Fachschaft zuweisen
-		$fsid = intval($_POST['new_fsid']);
+		$studiengang_id = intval($_POST['new_studiengangid']);
 		assign_fs_to_studiengang($fsid, $studiengang_id);
 		
 	} elseif(isset($_POST['rename'])) {
 		// Studiengang umbenennen
 		$newname = validate_string_for_mysql_html($_POST['inputNewname']);
-		rename_studiengang($studiengang_id, $newname);
+		rename_fs($fsid, $newname);
 		
 	} elseif(isset($_POST['delete'])){
 		// Studiengang löschen
-		delete_studiengang($studiengang_id);
-	} elseif(isset($_POST['fs_to_delete'])){
-		// FS entfernen
-		$fsid = intval($_POST['fs_to_delete']);
+		delete_fs($fsid);
+	} elseif(isset($_POST['studiengang_to_delete'])){
+		// Studiengang entfernen
+		$studiengang_id = intval($_POST['studiengang_to_delete']);
 		unjoin_fs_and_studiengang($fsid, $studiengang_id);
 	}
-} elseif(isset($_POST['createnewstudiengang'])){
-	// neuen Studiengang erstellen
-	$name = validate_string_for_mysql_html($_POST['inputStudiengangname']);
-	add_studiengang($name);
+} elseif(isset($_POST['add_fs'])){
+	$fsname = validate_string_for_mysql_html($_POST['inputFSName']);
+	add_fs($fsname);
 }
 
 ?>
@@ -43,6 +41,16 @@ if(isset($_POST['id'])){
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<title>fstool - Index</title>
+	
+	<style>
+	body {
+		padding-top: 20px;
+		padding-bottom: 20px;
+	}
+	.navbar {
+		margin-bottom: 20px;
+	}
+	</style>
 
 	<!-- Bootstrap -->
 	<link href="css/bootstrap.min.css" rel="stylesheet">
@@ -58,27 +66,6 @@ if(isset($_POST['id'])){
 	<script src="js/jquery.min.js"></script>
 	<!-- Include all compiled plugins (below), or include individual files as needed -->
 	<script src="js/bootstrap.min.js"></script>
-	
-	<style>
-	body {
-		padding-top: 20px;
-		padding-bottom: 20px;
-	}
-	.navbar {
-		margin-bottom: 20px;
-	}
-	
-	.panel-primary{
-		border-color: #34812c;
-	}
-	
-	.panel-primary > .panel-heading {
-		color: #FFF;
-		background-color: #34812C;
-		border-color: rgb(52, 129, 44);
-	}
-	</style>
-	
   </head>
   <body>
 	<div class="container">
@@ -97,15 +84,15 @@ if(isset($_POST['id'])){
           </div>
           <div class="navbar-collapse collapse">
             <ul class="nav navbar-nav">
-              <li><a href="fachschaften.php">Fachschaften</a></li>
-              <li class="active"><a href="studiengaenge.php">Studiengänge</a></li>
+              <li class="active"><a href="fachschaften.php">Fachschaften</a></li>
+              <li><a href="studiengaenge.php">Studiengänge</a></li>
               <li><a href="probleme.php">Probleme</a></li>
             </ul>
             
-            <form class="navbar-form navbar-left" role="form" id="newfsform" action="studiengaenge.php" method="post">
+		<form class="navbar-form navbar-left" role="form" id="newfsform" action="fachschaften.php" method="post">
 			<div class="form-group">
-				<input type="text" class="form-control" name="inputStudiengangname" placeholder="Neuer Studiengang">
-				<button type="submit" name="createnewstudiengang" value="0" class="btn btn-default">Hinzufügen</button>
+				<input type="text" class="form-control" name="inputFSName" placeholder="Neue Fachschaft">
+			<button type="submit" name="add_fs" class="btn btn-default">Hinzufügen</button>
 			</div>
 		</form>
 			
@@ -123,47 +110,57 @@ if(isset($_POST['id'])){
       </div>
       
       <?php 
-      $fs_select_list = get_fs_select_list();
       
-	$query = "SELECT ID, name FROM ".DB_PREF."studiengaenge ORDER BY name ASC;";
-      $result = mysql_query($query) or die("get_all_studiengaenge: Anfrage fehlgeschlagen: " . mysql_error());
+      $studiengang_select_list = get_studiengang_select_list();
+      
+      $query = "SELECT ID, name, satzung FROM ".DB_PREF."fachschaften ORDER BY name ASC;";
+      $result = mysql_query($query) or die("get_all_fs: Anfrage fehlgeschlagen: " . mysql_error());
       while($row = mysql_fetch_array($result)){
-            $id		= $row['ID'];
-            $name		= $row['name'];
+            $fsid		= $row['ID'];
+            $fsname	= $row['name'];
+            $satzung	= $row['satzung'];
             
             echo '	<div class="panel panel-primary">
 		<div class="panel-heading">
-			<h3 class="panel-title" id="'.$id.'"><a href="#'.$id.'"><span class="glyphicon glyphicon-tag"></span>
-</a> '.$name.'</h3>
+			<h3 class="panel-title" id="'.$fsid.'"><a href="#'.$fsid.'"><span class="glyphicon glyphicon-tag"></span>
+</a> '.$fsname.'</h3>
 		</div>
 		<div class="panel-body">
 		';
 		
-		echo '		<form class="" role="form" action="studiengaenge.php#'.$id.'" method="post">
-			<input type="hidden" name="id" value="'.$id.'" />
+		/*if($satzung != ''){
+			echo '	<p><a class="btn btn-success" href="'.$satzung.'">Satzung herunterladen</a></p>
+		';
+		} else {
+			echo '	<p><a class="btn btn-warning" disabled="disabled" href="#">keine Satzung vorhanden</a></p>
+		';
+		}*/
+		
+		echo '		<form class="" role="form" action="fachschaften.php#'.$fsid.'" method="post">
+			<input type="hidden" name="fsid" value="'.$fsid.'" />
 			<div class="list-group">
 				';
             
-            $fsen = get_fs_for_studiengang($id);
-		if(!$fsen){
-		echo '<a class="list-group-item list-group-item-warning"">Dieser Studiengang ist keiner Fachschaft zugeordnet.</a>
+            $studiengaenge = get_studiengaenge_for_fs($fsid);
+		if(!$studiengaenge){
+		echo '<a class="list-group-item list-group-item-warning"">Diese Fachschaft vertritt keinen Studiengang.</a>
 		';
 		} else {
-			echo '<a class="list-group-item list-group-item-info"><b>Fachschaft</b></a>
+			echo '<a class="list-group-item list-group-item-success"><b>Studiengänge</b></a>
 			';
-			foreach($fsen as $row){
-				echo '<a class="list-group-item" href="fachschaften.php#'.$row['ID'].'">'.$row['name'].' <button class="close" type="submit" name="fs_to_delete" value="'.$row['ID'].'" title="Diese Fachschaft entfernen">&times;</button></a>
+			foreach($studiengaenge as $row){
+				echo '<a class="list-group-item" href="studiengaenge.php#'.$row['ID'].'">'.$row['name'].' <button class="close" type="submit" name="studiengang_to_delete" value="'.$row['ID'].'" title="Diesen Studiengang entfernen">&times;</button></a>
 				';
 			}
 		}
 		echo '</div>
 		</form>
-		<form class="form-inline" role="form" id="studiengangform" action="studiengaenge.php#'.$id.'" method="post">
-			<input type="hidden" name="id" value="'.$id.'" />
+		<form class="form-inline" role="form" action="fachschaften.php#'.$fsid.'" method="post">
+			<input type="hidden" name="fsid" value="'.$fsid.'" />
 			<div class="col-lg-5">
 				<div class="input-group">
-					<select class="form-control" name="new_fsid">
-						'.$fs_select_list.'
+					<select class="form-control" name="new_studiengangid">
+						'.$studiengang_select_list.'
 					</select>
 					<span class="input-group-btn">
 						<button class="btn btn-default" type="submit" name="assign">Zuweisen</button>
@@ -179,16 +176,16 @@ if(isset($_POST['id'])){
 					</span>
 				</div><!-- /input-group -->
 			</div>
-			<button type="submit" class="btn btn-danger" name="delete">Studiengang Löschen</button>
+			<button type="submit" class="btn btn-danger" name="delete">Fachschaft Löschen</button>
 		</form>
 		</div>
-		
 	</div>
 	
 	';
       }
-		
-	?>
+      
+      
+      ?>
       
       
       <?php
