@@ -42,12 +42,13 @@ if(isset($_POST['fsid'])){
 		}
 		
 	} elseif(isset($_POST['update'])){
-		// Telefon, Adresse und E-Mail aktualisieren
+		// Telefon, Adresse und E-Mail und Satzung aktualisieren
 		$phone = validate_string_for_mysql_html($_POST['inputPhone']);
 		$address = validate_string_for_mysql_html($_POST['inputAddress']);
 		$email = validate_string_for_mysql_html($_POST['inputEmail']);
+		$satzung = validate_string_for_mysql_html($_POST['inputSatzung']);
 		
-		if(set_fs_contactdata($fsid, $phone, $address, $email)){
+		if(set_fs_contactdata($fsid, $phone, $address, $email, $satzung)){
 			$alert = "		<div class='alert alert-success alert-dismissable'>
 			<button type='button' class='close' data-dismiss='alert' aria-hidden='true'>&times;</button>
 			Die Kontaktdaten der Fachschaft wurden aktualisiert.
@@ -104,7 +105,7 @@ if(isset($_POST['fsid'])){
 
 ?>
 <!DOCTYPE html>
-<html lang="en">
+<html lang="de">
   <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -172,6 +173,9 @@ if(isset($_POST['fsid'])){
 			<li class="dropdown">
 				<a href="#" class="dropdown-toggle" data-toggle="dropdown">Export <b class="caret"></b></a>
 				<ul class="dropdown-menu">
+					<li><a href="fachschaften-contact-plain.php" target="_blank">Kontaktdaten plain</a></li>
+					<li><a href="fachschaften-contact-md.php" target="_blank">Kontaktdaten Markdown</a></li>
+					<li class="divider"></li>
 					<li><a href="fachschaften-plain.php" target="_blank">Fachschaften plain</a></li>
 					<li><a href="studiengaenge-plain.php" target="_blank">Studiengänge plain</a></li>
 					<li><a href="fachschaften-plain.php?fullnames" target="_blank">Fachschaften plain (fullnames)</a></li>
@@ -240,13 +244,22 @@ if(isset($_POST['fsid'])){
 		<div class="row">
 			<div class="col-md-6">';
 		
+		
 		if(is_null($satzung)){
-			echo '	<p><a class="btn btn-warning" disabled="disabled" href="#">Keine Satzung vorhanden</a></p>
-		';
-		} else {
-			echo '	<p><a class="btn btn-success" href="'.$satzung.'">Fachschaftssatzung</a></p>
-		';
+			$satzung = '';
 		}
+		
+		echo '	<div class="input-group">
+					<span class="input-group-addon">';
+		if($satzung != ''){
+			echo '<a href="'.$satzung.'" title="Satzung aufrufen" target="_blank"><span class="glyphicon glyphicon-book"></span></a>';
+		} else {
+			echo '<span class="glyphicon glyphicon-book"></span>';
+		}
+		echo '</span>
+					<input type="text" class="form-control" placeholder="URL zur Satzung hier eingeben..." name="inputSatzung" value="'.$satzung.'">
+				</div>
+		';
 		
 		echo '</div>
 		<div class="col-md-6">';
@@ -328,7 +341,6 @@ if(isset($_POST['fsid'])){
 			<div class="col-lg-6">
 				<div class="input-group">
 					<select class="form-control select-studiengang" name="new_studiengangid">
-						<option>hahaha</option>
 					</select>
 					<span class="input-group-btn">
 						<button class="btn btn-default" type="submit" name="assign">Zuweisen</button>

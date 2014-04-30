@@ -30,15 +30,16 @@ if(isset($_POST['id'])){
 	} elseif(isset($_POST['rename'])) {
 		// Studiengang umbenennen
 		$newname = validate_string_for_mysql_html($_POST['inputNewname']);
-		if(rename_studiengang($studiengang_id, $newname)){
+		$newfullname = validate_string_for_mysql_html($_POST['inputNewfullname']);
+		if(rename_studiengang2($studiengang_id, $newname, $newfullname)){
 			$alert = "		<div class='alert alert-warning alert-dismissable'>
 			<button type='button' class='close' data-dismiss='alert' aria-hidden='true'>&times;</button>
-			Der Studiengang wurde in <strong>$newname</strong> umbenannt.
+			Der Studiengang wurde in <strong>$newname/$newfullname</strong> umbenannt.
 		</div>";
 		} else {
 			$alert = "		<div class='alert alert-danger alert-dismissable'>
 			<button type='button' class='close' data-dismiss='alert' aria-hidden='true'>&times;</button>
-			<strong>Fehler!</strong> Der Studiengang konnte nicht in '$newname' umbenannt werden. Eventuell existiert bereits ein Studiengang mit diesem Namen?
+			<strong>Fehler!</strong> Der Studiengang konnte nicht in '$newname/$newfullname' umbenannt werden. Eventuell existiert bereits ein Studiengang mit diesem Namen?
 		</div>";
 		}
 		
@@ -155,7 +156,8 @@ if(isset($_POST['id'])){
             
             <form class="navbar-form navbar-left" role="form" id="newfsform" action="studiengaenge.php" method="post">
 			<div class="form-group">
-				<input type="text" class="form-control" name="inputStudiengangname" placeholder="Neuer Studiengang">
+				<input type="text" class="form-control" name="inputStudiengangname" placeholder="Kurzname">
+				<input type="text" class="form-control" name="inputStudiengangfullname" placeholder="Vollständiger Name">
 				<button type="submit" name="createnewstudiengang" value="0" class="btn btn-default">Hinzufügen</button>
 			</div>
 		</form>
@@ -164,6 +166,9 @@ if(isset($_POST['id'])){
 			<li class="dropdown">
 				<a href="#" class="dropdown-toggle" data-toggle="dropdown">Export <b class="caret"></b></a>
 				<ul class="dropdown-menu">
+					<li><a href="fachschaften-contact-plain.php" target="_blank">Kontaktdaten plain</a></li>
+					<li><a href="fachschaften-contact-md.php" target="_blank">Kontaktdaten Markdown</a></li>
+					<li class="divider"></li>
 					<li><a href="fachschaften-plain.php" target="_blank">Fachschaften plain</a></li>
 					<li><a href="studiengaenge-plain.php" target="_blank">Studiengänge plain</a></li>
 					<li><a href="fachschaften-plain.php?fullnames" target="_blank">Fachschaften plain (fullnames)</a></li>
@@ -188,19 +193,22 @@ if(isset($_POST['id'])){
 	
       $fs_select_list = get_fs_select_list();
       
-	$query = "SELECT ID, name FROM ".DB_PREF."studiengaenge ORDER BY name ASC;";
+	$query = "SELECT ID, name, fullname FROM ".DB_PREF."studiengaenge ORDER BY name ASC;";
       $result = mysql_query($query) or die("get_all_studiengaenge: Anfrage fehlgeschlagen: " . mysql_error());
       while($row = mysql_fetch_array($result)){
             $id		= $row['ID'];
             $name		= $row['name'];
+            $fullname		= $row['fullname'];
             
             echo '	<div class="panel panel-primary">
 		<div class="panel-heading">
 			<h3 class="panel-title" id="'.$id.'"><a href="#'.$id.'"><span class="glyphicon glyphicon-tag"></span>
-</a> '.$name.'</h3>
+		</a> '.$name.'</h3>
 		</div>
 		<div class="panel-body">
 		';
+		
+		echo "<p>$fullname</p>";
 		
 		echo '		<form class="" role="form" action="studiengaenge.php#'.$id.'" method="post">
 			<input type="hidden" name="id" value="'.$id.'" />
@@ -225,8 +233,7 @@ if(isset($_POST['id'])){
 			<input type="hidden" name="id" value="'.$id.'" />
 			<div class="col-lg-5">
 				<div class="input-group">
-					<select class="form-control" name="new_fsid">
-						'.$fs_select_list.'
+					<select class="form-control select-fs" name="new_fsid">
 					</select>
 					<span class="input-group-btn">
 						<button class="btn btn-default" type="submit" name="assign">Zuweisen</button>
@@ -236,9 +243,10 @@ if(isset($_POST['id'])){
 			<div class="col-lg-5">
 				<div class="input-group">
 					<label class="sr-only" for="inputNewname">Umbenennen</label>
-					<input type="text" class="form-control" id="inputNewname" name="inputNewname" placeholder="Neuer Name">
+					<input type="text" class="form-control" id="inputNewname" name="inputNewname" placeholder="Neuer Kurzname">
+					<input type="text" class="form-control" id="inputNewfullname" name="inputNewfullname" placeholder="Neuer vollst. Name">
 					<span class="input-group-btn">
-						<button class="btn btn-default" type="submit" name="rename">Umbenennen</button>
+						<button class="btn btn-default" style="height:68px;" type="submit" name="rename">Umbenennen</button>
 					</span>
 				</div><!-- /input-group -->
 			</div>
@@ -259,6 +267,10 @@ if(isset($_POST['id'])){
       ?>
 
     </div> <!-- /container -->
+
+    <script type="text/javascript">
+	$('.select-fs').html("<?php echo $fs_select_list;?>");
+    </script>
 
 
   </body>

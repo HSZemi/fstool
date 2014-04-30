@@ -102,7 +102,7 @@ function get_fs_select_list(){
 	while($row = mysql_fetch_array($result)){
 		$id		= $row['ID'];
 		$name		= $row['name'];
-		$list .= "<option value='".$id."'>".$name."</option>\n";
+		$list .= "<option value='".$id."'>".$name."</option>";
 	}
 	return $list;
 }
@@ -165,8 +165,8 @@ function rename_fs($fsid, $newname){
 	}
 }
 
-function set_fs_contactdata($fsid, $phone, $address, $email){
-	$query = "UPDATE ".DB_PREF."fachschaften SET telefon='$phone', adresse='$address', email='$email' WHERE id = $fsid;";
+function set_fs_contactdata($fsid, $phone, $address, $email, $satzung){
+	$query = "UPDATE ".DB_PREF."fachschaften SET telefon='$phone', adresse='$address', email='$email', satzung='$satzung' WHERE id = $fsid;";
 	$result = mysql_query($query);
 	if($result){
 		return true;

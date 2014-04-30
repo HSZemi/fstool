@@ -73,6 +73,9 @@ include 'lib/db.php';
 			<li class="dropdown">
 				<a href="#" class="dropdown-toggle" data-toggle="dropdown">Export <b class="caret"></b></a>
 				<ul class="dropdown-menu">
+					<li><a href="fachschaften-contact-plain.php" target="_blank">Kontaktdaten plain</a></li>
+					<li><a href="fachschaften-contact-md.php" target="_blank">Kontaktdaten Markdown</a></li>
+					<li class="divider"></li>
 					<li><a href="fachschaften-plain.php" target="_blank">Fachschaften plain</a></li>
 					<li><a href="studiengaenge-plain.php" target="_blank">Studiengänge plain</a></li>
 					<li><a href="fachschaften-plain.php?fullnames" target="_blank">Fachschaften plain (fullnames)</a></li>
@@ -157,6 +160,102 @@ include 'lib/db.php';
 				$name		= $row['name'];
 				
 				echo '<a href="studiengaenge.php#'.$id.'" class="list-group-item">'.$name.'</a>
+				';
+			}
+				
+		?>
+			</div>
+		</div>
+	</div>
+      
+      <div class="panel panel-primary">
+		<div class="panel-heading">
+			<h3 class="panel-title">Fachschaften ohne Satzung</h3>
+		</div>
+		<div class="panel-body">
+			<div class="list-group">
+		
+		<?php 
+			$query = "SELECT ID, name FROM ".DB_PREF."fachschaften 
+			WHERE ".DB_PREF."fachschaften.satzung IS NULL OR ".DB_PREF."fachschaften.satzung = '' ORDER BY name ASC;";
+			$result = mysql_query($query) or die("get_fs_without_satzung: Anfrage fehlgeschlagen: " . mysql_error());
+			while($row = mysql_fetch_array($result)){
+				$id		= $row['ID'];
+				$name		= $row['name'];
+				
+				echo '<a class="list-group-item" href="fachschaften.php#'.$id.'">'.$name.'</a>
+				';
+			}
+				
+		?>
+			</div>
+		</div>
+	</div>
+	
+      <div class="panel panel-primary">
+		<div class="panel-heading">
+			<h3 class="panel-title">Fachschaften ohne E-Mail-Adresse</h3>
+		</div>
+		<div class="panel-body">
+			<div class="list-group">
+		
+		<?php 
+			$query = "SELECT ID, name FROM ".DB_PREF."fachschaften 
+			WHERE ".DB_PREF."fachschaften.email IS NULL OR ".DB_PREF."fachschaften.email = '' ORDER BY name ASC;";
+			$result = mysql_query($query) or die("get_fs_without_email: Anfrage fehlgeschlagen: " . mysql_error());
+			while($row = mysql_fetch_array($result)){
+				$id		= $row['ID'];
+				$name		= $row['name'];
+				
+				echo '<a class="list-group-item" href="fachschaften.php#'.$id.'">'.$name.'</a>
+				';
+			}
+				
+		?>
+			</div>
+		</div>
+	</div>
+	
+      <div class="panel panel-primary">
+		<div class="panel-heading">
+			<h3 class="panel-title">Fachschaften ohne Telefonnummer</h3>
+		</div>
+		<div class="panel-body">
+			<div class="list-group">
+		
+		<?php 
+			$query = "SELECT ID, name FROM ".DB_PREF."fachschaften 
+			WHERE ".DB_PREF."fachschaften.telefon IS NULL OR ".DB_PREF."fachschaften.telefon = '' ORDER BY name ASC;";
+			$result = mysql_query($query) or die("get_fs_without_telephone: Anfrage fehlgeschlagen: " . mysql_error());
+			while($row = mysql_fetch_array($result)){
+				$id		= $row['ID'];
+				$name		= $row['name'];
+				
+				echo '<a class="list-group-item" href="fachschaften.php#'.$id.'">'.$name.'</a>
+				';
+			}
+				
+		?>
+			</div>
+		</div>
+	</div>
+	
+      <div class="panel panel-primary">
+		<div class="panel-heading">
+			<h3 class="panel-title">Fachschaften ohne Adresse</h3>
+		</div>
+		<div class="panel-body">
+			<div class="list-group">
+		
+		<?php 
+			$query = "SELECT ID, name FROM ".DB_PREF."fachschaften 
+			WHERE ".DB_PREF."fachschaften.adresse IS NULL OR ".DB_PREF."fachschaften.adresse = '' ORDER BY name ASC;";
+			$result = mysql_query($query) or die("get_fs_without_address: Anfrage fehlgeschlagen: " . mysql_error());
+			while($row = mysql_fetch_array($result)){
+				$id		= $row['ID'];
+				$name		= $row['name'];
+				
+				echo '<a class="list-group-item" href="fachschaften.php#'.$id.'">'.$name.'</a>
 				';
 			}
 				
