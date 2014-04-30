@@ -71,7 +71,7 @@ function get_fs_for_studiengang($id){
 function get_studiengaenge_for_fs($id){
 	$id = intval($id);
 	$studiengaenge = Array();
-	$query = "SELECT ID, name FROM ".DB_PREF."studiengaenge 
+	$query = "SELECT ID, name, fullname FROM ".DB_PREF."studiengaenge 
 		JOIN ".DB_PREF."zuordnung ON ".DB_PREF."zuordnung.studiengang = ".DB_PREF."studiengaenge.ID 
 		WHERE ".DB_PREF."zuordnung.fachschaft = ".$id." ORDER BY name ASC;";
 	$result = mysql_query($query) or die("get_studiengaenge_for_fs: Anfrage fehlgeschlagen: " . mysql_error());
@@ -114,7 +114,7 @@ function get_studiengang_select_list(){
 	while($row = mysql_fetch_array($result)){
 		$id		= $row['ID'];
 		$name		= $row['name'];
-		$list .= "<option value='".$id."'>".$name."</option>\n";
+		$list .= "<option value='".$id."'>".$name."</option>";
 	}
 	return $list;
 }
@@ -143,6 +143,17 @@ function rename_studiengang($id, $newname){
 	}
 }
 
+function rename_studiengang2($id, $newname, $newfullname){
+	$id = intval($id);
+	$query = "UPDATE ".DB_PREF."studiengaenge SET name='$newname', fullname='$newfullname' WHERE ID = $id;";
+	$result = mysql_query($query);
+	if($result){
+		return true;
+	} else {
+		return false;
+	}
+}
+
 function rename_fs($fsid, $newname){
 	$fsid = intval($fsid);
 	$query = "UPDATE ".DB_PREF."fachschaften SET name='$newname' WHERE ID = $fsid;";
@@ -151,6 +162,17 @@ function rename_fs($fsid, $newname){
 		return true;
 	} else {
 		return false;
+	}
+}
+
+function set_fs_contactdata($fsid, $phone, $address, $email){
+	$query = "UPDATE ".DB_PREF."fachschaften SET telefon='$phone', adresse='$address', email='$email' WHERE id = $fsid;";
+	$result = mysql_query($query);
+	if($result){
+		return true;
+	} else {
+		return false;
+		
 	}
 }
 
@@ -180,6 +202,17 @@ function add_fs($name){
 
 function add_studiengang($name){
 	$query = "INSERT INTO ".DB_PREF."studiengaenge(name) VALUES ('$name')";
+	$result = mysql_query($query);
+	if($result){
+		return true;
+	} else {
+		return false;
+		
+	}
+}
+
+function add_studiengang2($name, $fullname){
+	$query = "INSERT INTO ".DB_PREF."studiengaenge(name) VALUES ('$name', '$fullname')";
 	$result = mysql_query($query);
 	if($result){
 		return true;

@@ -3,29 +3,23 @@
 include 'lib/config.php';
 include 'lib/db.php';
 
-
-function underline($string, $char){
-	echo $string;
-	echo "<br>\n";
-	for($i = 0; $i < strlen($string); $i += 1){
-		echo $char;
-	}
-	echo "<br>\n";
+$fullnames = false;
+if(isset($_GET['fullnames'])){
+	$fullnames = true;
 }
 
 ?>
 <!DOCTYPE html>
-<html lang="en">
+<html lang="de">
   <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<title>fstool - Fachschaften - Markdown</title>
+	<title>fstool - Fachschaften - Plaintext</title>
   </head>
   <body>
   
-Liste der Fachschaften der RFWU Bonn mit zugeordneten Studiengängen<br>
-===================================================================<br><br>
+<h1>Liste der Fachschaften der RFWU Bonn mit zugeordneten Studiengängen</h1>
 
 
 <?php
@@ -39,17 +33,21 @@ while($row = mysql_fetch_array($result)){
       $id		= $row['ID'];
       $name		= $row['name'];
       
-	underline($name, '-');
+	echo "<h2>$name</h2>\n<ul>\n";
 	
 	$fsen = get_studiengaenge_for_fs($id);
 	if(!$fsen){
-		echo "Diese Fachschaft vertritt keinen Studiengang.<br>\n<br>\n";
+		echo "<li>Diese Fachschaft vertritt keinen Studiengang.</li>\n";
 	} else {
 		foreach($fsen as $row){
-			echo "  * ".$row['name']."<br>\n";
+			if($fullnames){
+				echo "<li>".$row['fullname']."</li>\n";
+			} else {
+				echo "<li>".$row['name']."</li>\n";
+			}
 		}
-		echo "<br>\n";
 	}
+	echo "</ul>\n\n";
 }
 	
 db_close($link);

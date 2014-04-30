@@ -5,6 +5,7 @@ include 'lib/db.php';
 
 
 $link = db_connect();
+$alert = '';
 
 if(isset($_POST['fsid'])){
 	$fsid = intval($_POST['fsid']);
@@ -37,6 +38,24 @@ if(isset($_POST['fsid'])){
 			$alert = "		<div class='alert alert-danger alert-dismissable'>
 			<button type='button' class='close' data-dismiss='alert' aria-hidden='true'>&times;</button>
 			<strong>Fehler!</strong> Die Fachschaft konnte nicht in '$newname' umbenannt werden. Eventuell existiert bereits eine Fachschaft mit diesem Namen?
+		</div>";
+		}
+		
+	} elseif(isset($_POST['update'])){
+		// Telefon, Adresse und E-Mail aktualisieren
+		$phone = validate_string_for_mysql_html($_POST['inputPhone']);
+		$address = validate_string_for_mysql_html($_POST['inputAddress']);
+		$email = validate_string_for_mysql_html($_POST['inputEmail']);
+		
+		if(set_fs_contactdata($fsid, $phone, $address, $email)){
+			$alert = "		<div class='alert alert-success alert-dismissable'>
+			<button type='button' class='close' data-dismiss='alert' aria-hidden='true'>&times;</button>
+			Die Kontaktdaten der Fachschaft wurden aktualisiert.
+		</div>";
+		} else {
+			$alert = "		<div class='alert alert-danger alert-dismissable'>
+			<button type='button' class='close' data-dismiss='alert' aria-hidden='true'>&times;</button>
+			<strong>Fehler!</strong> Die Kontaktdaten der Fachschaft konnten nicht aktualisiert werden.
 		</div>";
 		}
 		
@@ -100,6 +119,9 @@ if(isset($_POST['fsid'])){
 	.navbar {
 		margin-bottom: 20px;
 	}
+	.show-edit-area {
+		cursor: pointer;
+	}
 	</style>
 
 	<!-- Bootstrap -->
@@ -148,10 +170,17 @@ if(isset($_POST['fsid'])){
 			
 		<ul class="nav navbar-nav navbar-right">
 			<li class="dropdown">
-				<a href="#" class="dropdown-toggle" data-toggle="dropdown">Markdown <b class="caret"></b></a>
+				<a href="#" class="dropdown-toggle" data-toggle="dropdown">Export <b class="caret"></b></a>
 				<ul class="dropdown-menu">
-					<li><a href="md-fachschaften.php" target="_blank">Fachschaften</a></li>
-					<li><a href="md-studiengaenge.php" target="_blank">Studiengänge</a></li>
+					<li><a href="fachschaften-plain.php" target="_blank">Fachschaften plain</a></li>
+					<li><a href="studiengaenge-plain.php" target="_blank">Studiengänge plain</a></li>
+					<li><a href="fachschaften-plain.php?fullnames" target="_blank">Fachschaften plain (fullnames)</a></li>
+					<li><a href="studiengaenge-plain.php?fullnames" target="_blank">Studiengänge plain (fullnames)</a></li>
+					<li class="divider"></li>
+					<li><a href="fachschaften-md.php">Fachschaften Markdown</a></li>
+					<li><a href="studiengaenge-md.php">Studiengänge Markdown</a></li>
+					<li><a href="fachschaften-md.php?fullnames">Fachschaften Markdown (fullnames)</a></li>
+					<li><a href="studiengaenge-md.php?fullnames">Studiengänge Markdown (fullnames)</a></li>
 				</ul>
 			</li>
 		</ul>
@@ -166,12 +195,15 @@ if(isset($_POST['fsid'])){
       
       $studiengang_select_list = get_studiengang_select_list();
       
-      $query = "SELECT ID, name, satzung FROM ".DB_PREF."fachschaften ORDER BY name ASC;";
+      $query = "SELECT ID, name, satzung, email, telefon, adresse FROM ".DB_PREF."fachschaften ORDER BY name ASC;";
       $result = mysql_query($query) or die("get_all_fs: Anfrage fehlgeschlagen: " . mysql_error());
       while($row = mysql_fetch_array($result)){
             $fsid		= $row['ID'];
             $fsname	= $row['name'];
             $satzung	= $row['satzung'];
+            $email	= $row['email'];
+            $telefon	= $row['telefon'];
+            $adresse	= $row['adresse'];
             
             echo '	<div class="panel panel-primary">
 		<div class="panel-heading">
@@ -181,13 +213,6 @@ if(isset($_POST['fsid'])){
 		<div class="panel-body">
 		';
 		
-		/*if($satzung != ''){
-			echo '	<p><a class="btn btn-success" href="'.$satzung.'">Satzung herunterladen</a></p>
-		';
-		} else {
-			echo '	<p><a class="btn btn-warning" disabled="disabled" href="#">keine Satzung vorhanden</a></p>
-		';
-		}*/
 		
 		echo '		<form class="" role="form" action="fachschaften.php#'.$fsid.'" method="post">
 			<input type="hidden" name="fsid" value="'.$fsid.'" />
@@ -207,20 +232,110 @@ if(isset($_POST['fsid'])){
 			}
 		}
 		echo '</div>
-		</form>
-		<form class="form-inline" role="form" action="fachschaften.php#'.$fsid.'" method="post">
+		</form>';
+		
+		echo '<form class="form-inline" role="form" action="fachschaften.php#'.$fsid.'" method="post">
 			<input type="hidden" name="fsid" value="'.$fsid.'" />
-			<div class="col-lg-5">
+		
+		<div class="row">
+			<div class="col-md-6">';
+		
+		if(is_null($satzung)){
+			echo '	<p><a class="btn btn-warning" disabled="disabled" href="#">Keine Satzung vorhanden</a></p>
+		';
+		} else {
+			echo '	<p><a class="btn btn-success" href="'.$satzung.'">Fachschaftssatzung</a></p>
+		';
+		}
+		
+		echo '</div>
+		<div class="col-md-6">';
+		
+		if(is_null($email)){
+			$email = '';
+		}
+		
+		echo '	<div class="input-group">
+			<span class="input-group-addon">';
+		if($email != ''){
+			echo '<a href="mailto:'.$email.'"><span class="glyphicon glyphicon-envelope"></span></a>';
+		} else {
+			echo '<span class="glyphicon glyphicon-envelope"></span>';
+		}
+		echo '</span>
+			<input type="text" class="form-control" placeholder="E-Mail-Adresse hier eingeben..." name="inputEmail" value="'.$email.'">
+		</div>
+		';
+		
+		echo '</div>
+		</div>';
+		
+		echo '<div class="row">
+			<div class="col-md-6">';
+		
+		if(is_null($adresse)){
+			$adresse = '';
+		}
+		
+		echo '	<div class="input-group">
+					<span class="input-group-addon">';
+		if($adresse != ''){
+			echo '<a href="https://maps.google.de/maps?q='.$adresse.'" title="In Google Maps suchen" target="_blank"><span class="glyphicon glyphicon-home"></span></a>';
+		} else {
+			echo '<span class="glyphicon glyphicon-home"></span>';
+		}
+		echo '</span>
+					<input type="text" class="form-control" placeholder="Adresse hier eingeben..." name="inputAddress" value="'.$adresse.'">
+				</div>
+		';
+		
+		
+		echo '</div>
+		<div class="col-md-6">';
+		
+
+		if(is_null($telefon)){
+			$telefon = '';
+		}
+		
+		echo '	<div class="input-group">
+			<span class="input-group-addon"><span class="glyphicon glyphicon-earphone"></span></span>
+			<input type="text" class="form-control" placeholder="Telefonnummer hier eingeben..." name="inputPhone" value="'.$telefon.'">
+		</div>
+		';
+		
+		
+		echo '</div>
+		</div>
+		
+		<hr style="margin-bottom:2px;"/>';
+		
+		echo '
+		<span class="show-edit-area pull-right" style="padding-top:0px;">bearbeiten</span>
+		
+		<div class="edit-area">
+			<div class="row" style="margin-top:5px;">
+				<div class="col-lg-2">
+					<button type="submit" class="btn btn-danger btn-block" name="delete">Fachschaft Löschen</button>
+				</div>
+				<div class="col-lg-offset-8 col-lg-2">
+					<button type="submit" class="btn btn-primary btn-block" name="update">Daten aktualisieren</button>
+				</div>
+			</div>
+			
+			<div class="row" style="margin-top:5px;">
+			
+			<div class="col-lg-6">
 				<div class="input-group">
-					<select class="form-control" name="new_studiengangid">
-						'.$studiengang_select_list.'
+					<select class="form-control select-studiengang" name="new_studiengangid">
+						<option>hahaha</option>
 					</select>
 					<span class="input-group-btn">
 						<button class="btn btn-default" type="submit" name="assign">Zuweisen</button>
 					</span>
 				</div>
 			</div>
-			<div class="col-lg-5">
+			<div class="col-lg-6">
 				<div class="input-group">
 					<label class="sr-only" for="inputNewname">Umbenennen</label>
 					<input type="text" class="form-control" id="inputNewname" name="inputNewname" placeholder="Neuer Name">
@@ -229,8 +344,11 @@ if(isset($_POST['fsid'])){
 					</span>
 				</div><!-- /input-group -->
 			</div>
-			<button type="submit" class="btn btn-danger" name="delete">Fachschaft Löschen</button>
+			
+			</div>
+			
 		</form>
+		</div>
 		</div>
 	</div>
 	
@@ -246,6 +364,15 @@ if(isset($_POST['fsid'])){
       ?>
 
     </div> <!-- /container -->
+    
+    <script type="text/javascript">
+	$('.edit-area').hide();
+	$('.select-studiengang').html("<?php echo $studiengang_select_list;?>");
+	$('.show-edit-area').click(function() {
+		$(this).hide();
+		$(this).next('.edit-area').show();
+	});
+    </script>
 
 
   </body>

@@ -148,6 +148,9 @@ if(isset($_POST['dbname']) and isset($_POST['dbuser']) and isset($_POST['dbpass'
 			id		int			AUTO_INCREMENT,
 			name		VARCHAR(255)	UNIQUE,
 			satzung	VARCHAR(255),
+			email		VARCHAR(255),
+			telefon	VARCHAR(255),
+			adresse	text,
 			
 			PRIMARY KEY (id)
 		) DEFAULT COLLATE utf8_unicode_ci;";
@@ -169,6 +172,7 @@ if(isset($_POST['dbname']) and isset($_POST['dbuser']) and isset($_POST['dbpass'
 		$query = "CREATE TABLE ".$dbpref."studiengaenge (
 			id		int			AUTO_INCREMENT,
 			name		VARCHAR(255)	UNIQUE,
+			fullname	VARCHAR(255)	UNIQUE,
 			
 			PRIMARY KEY (id)
 		) DEFAULT COLLATE utf8_unicode_ci;";

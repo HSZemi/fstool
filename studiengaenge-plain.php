@@ -3,14 +3,9 @@
 include 'lib/config.php';
 include 'lib/db.php';
 
-
-function underline($string, $char){
-	echo $string;
-	echo "<br>\n";
-	for($i = 0; $i < strlen($string); $i += 1){
-		echo $char;
-	}
-	echo "<br>\n";
+$fullnames = false;
+if(isset($_GET['fullnames'])){
+	$fullnames = true;
 }
 
 ?>
@@ -24,8 +19,7 @@ function underline($string, $char){
   </head>
   <body>
   
-Liste der Studiengänge der RFWU Bonn mit zugeordneten Fachschaften<br>
-==================================================================<br><br>
+<h1>Liste der Studiengänge der RFWU Bonn mit zugeordneten Fachschaften</h1>
 
 
 <?php
@@ -33,22 +27,27 @@ Liste der Studiengänge der RFWU Bonn mit zugeordneten Fachschaften<br>
 $link = db_connect();
 
 
-$query = "SELECT ID, name FROM ".DB_PREF."studiengaenge ORDER BY name ASC;";
+$query = "SELECT ID, name, fullname FROM ".DB_PREF."studiengaenge ORDER BY name ASC;";
 $result = mysql_query($query) or die("get_all_studiengaenge: Anfrage fehlgeschlagen: " . mysql_error());
 while($row = mysql_fetch_array($result)){
       $id		= $row['ID'];
       $name		= $row['name'];
+      $fullname	= $row['fullname'];
       
-	underline($name, '-');
+      if($fullnames){
+		echo "<h2>$fullname</h2>\n<ul>\n";
+	} else {
+		echo "<h2>$name</h2>\n<ul>\n";
+	}
 	
 	$fsen = get_fs_for_studiengang($id);
 	if(!$fsen){
-		echo "Dieser Studiengang ist keiner Fachschaft zugeordnet.<br>\n<br>\n";
+		echo "<li>Dieser Studiengang ist keiner Fachschaft zugeordnet.</li>\n";
 	} else {
 		foreach($fsen as $row){
-			echo "  * ".$row['name']."<br>\n";
+			echo "<li>".$row['name']."</li>\n";
 		}
-		echo "<br>\n";
+		echo "</ul>\n\n";
 	}
 }
 	
