@@ -163,23 +163,7 @@ if(isset($_POST['id'])){
 		</form>
 			
 		<ul class="nav navbar-nav navbar-right">
-			<li class="dropdown">
-				<a href="#" class="dropdown-toggle" data-toggle="dropdown">Export <b class="caret"></b></a>
-				<ul class="dropdown-menu">
-					<li><a href="fachschaften-contact-plain.php" target="_blank">Kontaktdaten plain</a></li>
-					<li><a href="fachschaften-contact-md.php" target="_blank">Kontaktdaten Markdown</a></li>
-					<li class="divider"></li>
-					<li><a href="fachschaften-plain.php" target="_blank">Fachschaften plain</a></li>
-					<li><a href="studiengaenge-plain.php" target="_blank">Studiengänge plain</a></li>
-					<li><a href="fachschaften-plain.php?fullnames" target="_blank">Fachschaften plain (fullnames)</a></li>
-					<li><a href="studiengaenge-plain.php?fullnames" target="_blank">Studiengänge plain (fullnames)</a></li>
-					<li class="divider"></li>
-					<li><a href="fachschaften-md.php">Fachschaften Markdown</a></li>
-					<li><a href="studiengaenge-md.php">Studiengänge Markdown</a></li>
-					<li><a href="fachschaften-md.php?fullnames">Fachschaften Markdown (fullnames)</a></li>
-					<li><a href="studiengaenge-md.php?fullnames">Studiengänge Markdown (fullnames)</a></li>
-				</ul>
-			</li>
+              <li><a href="export.php">Exportieren</a></li>
 		</ul>
           </div><!--/.nav-collapse -->
         </div><!--/.container-fluid -->

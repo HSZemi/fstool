@@ -165,8 +165,8 @@ function rename_fs($fsid, $newname){
 	}
 }
 
-function set_fs_contactdata($fsid, $phone, $address, $email, $satzung){
-	$query = "UPDATE ".DB_PREF."fachschaften SET telefon='$phone', adresse='$address', email='$email', satzung='$satzung' WHERE id = $fsid;";
+function set_fs_contactdata($fsid, $phone, $address, $email, $satzung, $iban){
+	$query = "UPDATE ".DB_PREF."fachschaften SET telefon='$phone', adresse='$address', email='$email', satzung='$satzung', iban='$iban' WHERE id = $fsid;";
 	$result = mysql_query($query);
 	if($result){
 		return true;

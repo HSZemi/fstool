@@ -1,46 +1,10 @@
-<?php
-
-include 'lib/config.php';
-include 'lib/db.php';
-
-
-$link = db_connect();
-
-$fs_count = -1;
-$studiengaenge_count = -1;
-
-$query = "SELECT COUNT(ID) AS count FROM ".DB_PREF."fachschaften;";
-$result = mysql_query($query) or die("count_fachschaften: Anfrage fehlgeschlagen: " . mysql_error());
-if($row = mysql_fetch_array($result)){
-	$fs_count	= intval($row['count']);
-}
-
-$query = "SELECT COUNT(ID) AS count FROM ".DB_PREF."studiengaenge;";
-$result = mysql_query($query) or die("count_studiengaenge: Anfrage fehlgeschlagen: " . mysql_error());
-if($row = mysql_fetch_array($result)){
-	$studiengaenge_count	= intval($row['count']);
-}
-
- db_close($link);
-
-?>
 <!DOCTYPE html>
 <html lang="en">
   <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<title>fstool - Index</title>
-	
-	<style>
-	body {
-		padding-top: 20px;
-		padding-bottom: 20px;
-	}
-	.navbar {
-		margin-bottom: 20px;
-	}
-	</style>
+	<title>fstool - Probleme</title>
 
 	<!-- Bootstrap -->
 	<link href="css/bootstrap.min.css" rel="stylesheet">
@@ -56,6 +20,26 @@ if($row = mysql_fetch_array($result)){
 	<script src="js/jquery.min.js"></script>
 	<!-- Include all compiled plugins (below), or include individual files as needed -->
 	<script src="js/bootstrap.min.js"></script>
+	
+	<style>
+	body {
+		padding-top: 20px;
+		padding-bottom: 20px;
+	}
+	.navbar {
+		margin-bottom: 20px;
+	}
+	
+	.panel-primary{
+		border-color: #777;
+	}
+	
+	.panel-primary > .panel-heading {
+		color: #FFF;
+		background-color: #777;
+		border-color: rgb(77, 77, 77);
+	}
+	</style>
   </head>
   <body>
 	<div class="container">
@@ -80,31 +64,41 @@ if($row = mysql_fetch_array($result)){
             </ul>
 			
 		<ul class="nav navbar-nav navbar-right">
-              <li><a href="export.php">Exportieren</a></li>
+              <li class="active"><a href="export.php">Exportieren</a></li>
 		</ul>
           </div><!--/.nav-collapse -->
         </div><!--/.container-fluid -->
       </div>
       
-      <div class="container">
-
-	<!-- Main component for a primary marketing message or call to action -->
-	<div class="jumbotron">
-	
-	
-		<h1>fstool <small>Übersicht</small></h1>
-		<p>fstool ist ein Tool zur Verwaltung von Fachschaften der RFWU Bonn.</p>
-		
-		<div id="alert"></div>
-
-       
-		<?php echo "<p>Derzeit sind <a href='fachschaften.php' class='btn btn-info'><span class='badge'>$fs_count</span> Fachschaften</a> und <a href='studiengaenge.php' class='btn btn-success'><span class='badge'>$studiengaenge_count</span> Studiengänge</a> eingetragen.</p>"; ?>
-		
-		<p><small>(„Studiengang“ bezeichnet hier eine Fach-Abschluss-Kombination.)</small></p>
-
+      <div class="panel panel-primary">
+		<div class="panel-heading">
+			<h3 class="panel-title">Daten exportieren</h3>
+		</div>
+		<div class="panel-body">
+			<h4>Kontaktdaten</h4>
+			<ul>
+				<li><a href="fachschaften-contact-plain.php" target="_blank">Kontaktdaten plain</a></li>
+				<li><a href="fachschaften-contact-plain-iban.php" target="_blank">Kontaktdaten plain mit IBAN</a></li>
+				<li><a href="fachschaften-contact-md.php" target="_blank">Kontaktdaten Markdown</a></li>
+			</ul>
+			
+			<h4>Liste der Fachschaften <small>(mit Studiengängen)</small></h4>
+			<ul>
+				<li><a href="fachschaften-plain.php" target="_blank">Fachschaften plain</a></li>
+				<li><a href="fachschaften-plain.php?fullnames" target="_blank"><b>Fachschaften plain (fullnames)</b></a></li>
+				<li><a href="fachschaften-md.php">Fachschaften Markdown</a></li>
+				<li><a href="fachschaften-md.php?fullnames">Fachschaften Markdown (fullnames)</a></li>
+			</ul>
+			
+			<h4>Liste der Studiengänge <small>(mit Fachschaften)</small></h4>
+			<ul>
+				<li><a href="studiengaenge-plain.php" target="_blank">Studiengänge plain</a></li>
+				<li><a href="studiengaenge-plain.php?fullnames" target="_blank">Studiengänge plain (fullnames)</a></li>
+				<li><a href="studiengaenge-md.php">Studiengänge Markdown</a></li>
+				<li><a href="studiengaenge-md.php?fullnames">Studiengänge Markdown (fullnames)</a></li>
+			</ul>
+		</div>
 	</div>
-
-	</div> <!-- /container -->
 
     </div> <!-- /container -->
 

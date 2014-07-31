@@ -47,8 +47,9 @@ if(isset($_POST['fsid'])){
 		$address = validate_string_for_mysql_html($_POST['inputAddress']);
 		$email = validate_string_for_mysql_html($_POST['inputEmail']);
 		$satzung = validate_string_for_mysql_html($_POST['inputSatzung']);
+		$iban = validate_string_for_mysql_html($_POST['inputIban']);
 		
-		if(set_fs_contactdata($fsid, $phone, $address, $email, $satzung)){
+		if(set_fs_contactdata($fsid, $phone, $address, $email, $satzung, $iban)){
 			$alert = "		<div class='alert alert-success alert-dismissable'>
 			<button type='button' class='close' data-dismiss='alert' aria-hidden='true'>&times;</button>
 			Die Kontaktdaten der Fachschaft wurden aktualisiert.
@@ -139,6 +140,9 @@ if(isset($_POST['fsid'])){
 	<script src="js/jquery.min.js"></script>
 	<!-- Include all compiled plugins (below), or include individual files as needed -->
 	<script src="js/bootstrap.min.js"></script>
+	<!-- encryption js -->
+	<script type="text/javascript" src="js/aes.js"></script> 
+	<script type="text/javascript" src="js/iban.js"></script> 
   </head>
   <body>
 	<div class="container">
@@ -170,23 +174,8 @@ if(isset($_POST['fsid'])){
 		</form>
 			
 		<ul class="nav navbar-nav navbar-right">
-			<li class="dropdown">
-				<a href="#" class="dropdown-toggle" data-toggle="dropdown">Export <b class="caret"></b></a>
-				<ul class="dropdown-menu">
-					<li><a href="fachschaften-contact-plain.php" target="_blank">Kontaktdaten plain</a></li>
-					<li><a href="fachschaften-contact-md.php" target="_blank">Kontaktdaten Markdown</a></li>
-					<li class="divider"></li>
-					<li><a href="fachschaften-plain.php" target="_blank">Fachschaften plain</a></li>
-					<li><a href="studiengaenge-plain.php" target="_blank">Studiengänge plain</a></li>
-					<li><a href="fachschaften-plain.php?fullnames" target="_blank">Fachschaften plain (fullnames)</a></li>
-					<li><a href="studiengaenge-plain.php?fullnames" target="_blank">Studiengänge plain (fullnames)</a></li>
-					<li class="divider"></li>
-					<li><a href="fachschaften-md.php">Fachschaften Markdown</a></li>
-					<li><a href="studiengaenge-md.php">Studiengänge Markdown</a></li>
-					<li><a href="fachschaften-md.php?fullnames">Fachschaften Markdown (fullnames)</a></li>
-					<li><a href="studiengaenge-md.php?fullnames">Studiengänge Markdown (fullnames)</a></li>
-				</ul>
-			</li>
+		  <li><button type="button" class="btn btn-default navbar-btn" onclick="toggleIban()" id="ibanbutton">IBAN: <span class="glyphicon glyphicon-lock"></span></button></li>
+              <li><a href="export.php">Exportieren</a></li>
 		</ul>
           </div><!--/.nav-collapse -->
         </div><!--/.container-fluid -->
@@ -199,7 +188,7 @@ if(isset($_POST['fsid'])){
       
       $studiengang_select_list = get_studiengang_select_list();
       
-      $query = "SELECT ID, name, satzung, email, telefon, adresse FROM ".DB_PREF."fachschaften ORDER BY name ASC;";
+      $query = "SELECT ID, name, satzung, email, telefon, adresse, iban FROM ".DB_PREF."fachschaften ORDER BY name ASC;";
       $result = mysql_query($query) or die("get_all_fs: Anfrage fehlgeschlagen: " . mysql_error());
       while($row = mysql_fetch_array($result)){
             $fsid		= $row['ID'];
@@ -208,6 +197,7 @@ if(isset($_POST['fsid'])){
             $email	= $row['email'];
             $telefon	= $row['telefon'];
             $adresse	= $row['adresse'];
+            $iban		= $row['iban'];
             
             echo '	<div class="panel panel-primary">
 		<div class="panel-heading">
@@ -317,6 +307,20 @@ if(isset($_POST['fsid'])){
 		</div>
 		';
 		
+		echo '</div>
+		<div class="col-md-6">';
+		
+
+		if(is_null($iban)){
+			$iban = '';
+		}
+		
+		echo '	<div class="input-group">
+			<span class="input-group-addon"><span class="glyphicon glyphicon-euro"></span></span>
+			<input type="text" class="form-control iban" placeholder="IBAN hier eingeben..." name="inputIban" value="'.$iban.'" readonly>
+		</div>
+		';
+		
 		
 		echo '</div>
 		</div>
@@ -384,6 +388,21 @@ if(isset($_POST['fsid'])){
 		$(this).hide();
 		$(this).next('.edit-area').show();
 	});
+	
+	var ibanpassword = '';
+	
+	var ibanlocked = true;
+	
+	// always encrypt before submission
+	$("form").submit(function(e) {
+		if(!ibanlocked){
+			toggleIban();
+		}
+	});
+	
+	
+	
+	
     </script>
 
 

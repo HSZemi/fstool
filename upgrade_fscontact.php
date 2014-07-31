@@ -159,6 +159,40 @@ if(file_exists($configfile)){
 			$lgi_6 = $lgi_ok;
 		}
 	}
+	
+	$iban_error_occured = false;
+	// prüfen, ob IBAN-Feld noch nicht existiert
+	if(!$iban_error_occured){
+		$query = "SELECT * from INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '".$dbpref."fachschaften' AND COLUMN_NAME = 'iban';";
+		$result = mysql_query($query);
+		if(!$result){
+			$stat_7 = $badge_error;
+			$lgi_7 = $lgi_error;
+			$error_occured = true;
+		} elseif(mysql_num_rows($result) > 0) {
+			$stat_7 = $badge_error;
+			$lgi_7 = $lgi_error;
+			$error_occured = true;
+		} else {
+			$stat_7 = $badge_ok;
+			$lgi_7 = $lgi_ok;
+		}
+	}
+	
+	// füge Feld für IBAN ein
+	if(!$iban_error_occured){
+		$query = "ALTER TABLE ".$dbpref."fachschaften 
+			ADD COLUMN 	iban		VARCHAR(255)";
+		$result = mysql_query($query);
+		if(!$result){
+			$stat_8 = $badge_error;
+			$lgi_8 = $lgi_error;
+			$error_occured = true;
+		} else {
+			$stat_8 = $badge_ok;
+			$lgi_8 = $lgi_ok;
+		}
+	}
 
 /*
  * DB-Verbindung schließen
@@ -174,7 +208,7 @@ if(file_exists($configfile)){
 		}
 	}
 
-	if($error_occured){
+	if($error_occured or $iban_error_occured){
 		$lastmessage = "<p>Fehler sind aufgetreten.</p>\n<a class='btn btn-default' href='upgrade_fscontact.php'>Upgrade neu starten</a>";
 	}
 	
@@ -231,6 +265,8 @@ if(file_exists($configfile)){
 		<li class="list-group-item<?php echo $lgi_4; ?>">Prüfe, ob 'telefon'-Feld noch nicht existiert... <?php echo $stat_4; ?></li>
 		<li class="list-group-item<?php echo $lgi_5; ?>">Prüfe, ob 'adresse'-Feld noch nicht existiert... <?php echo $stat_5; ?></li>
 		<li class="list-group-item<?php echo $lgi_6; ?>">Füge Felder für E-Mail, Telefon und Adresse ein... <?php echo $stat_6; ?></li>
+		<li class="list-group-item<?php echo $lgi_7; ?>">Prüfe, ob 'iban'-Feld noch nicht existiert... <?php echo $stat_7; ?></li>
+		<li class="list-group-item<?php echo $lgi_8; ?>">Füge Feld für IBAN ein... <?php echo $stat_8; ?></li>
 		<li class="list-group-item<?php echo $lgi_10; ?>">Schließe Datenbankverbindung... <?php echo $stat_10; ?></li>
 		</ul>
 		
