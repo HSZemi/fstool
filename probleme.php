@@ -247,6 +247,30 @@ include 'lib/db.php';
 			</div>
 		</div>
 	</div>
+	
+      <div class="panel panel-primary">
+		<div class="panel-heading">
+			<h3 class="panel-title">Fachschaften ohne IBAN</h3>
+		</div>
+		<div class="panel-body">
+			<div class="list-group">
+		
+		<?php 
+			$query = "SELECT ID, name FROM ".DB_PREF."fachschaften 
+			WHERE ".DB_PREF."fachschaften.iban IS NULL OR ".DB_PREF."fachschaften.iban = '' ORDER BY name ASC;";
+			$result = mysql_query($query) or die("get_fs_without_iban: Anfrage fehlgeschlagen: " . mysql_error());
+			while($row = mysql_fetch_array($result)){
+				$id		= $row['ID'];
+				$name		= $row['name'];
+				
+				echo '<a class="list-group-item" href="fachschaften.php#'.$id.'">'.$name.'</a>
+				';
+			}
+				
+		?>
+			</div>
+		</div>
+	</div>
       
       
       <?php
