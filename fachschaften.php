@@ -47,9 +47,10 @@ if(isset($_POST['fsid'])){
 		$address = validate_string_for_mysql_html($_POST['inputAddress']);
 		$email = validate_string_for_mysql_html($_POST['inputEmail']);
 		$satzung = validate_string_for_mysql_html($_POST['inputSatzung']);
+		$www = validate_string_for_mysql_html($_POST['inputWWW']);
 		$iban = validate_string_for_mysql_html($_POST['inputIban']);
 		
-		if(set_fs_contactdata($fsid, $phone, $address, $email, $satzung, $iban)){
+		if(set_fs_contactdata($fsid, $phone, $address, $email, $satzung, $www, $iban)){
 			$alert = "		<div class='alert alert-success alert-dismissable'>
 			<button type='button' class='close' data-dismiss='alert' aria-hidden='true'>&times;</button>
 			Die Kontaktdaten der Fachschaft wurden aktualisiert.
@@ -188,7 +189,7 @@ if(isset($_POST['fsid'])){
       
       $studiengang_select_list = get_studiengang_select_list();
       
-      $query = "SELECT ID, name, satzung, email, telefon, adresse, iban FROM ".DB_PREF."fachschaften ORDER BY name ASC;";
+      $query = "SELECT ID, name, satzung, email, telefon, adresse, www, iban FROM ".DB_PREF."fachschaften ORDER BY name ASC;";
       $result = mysql_query($query) or die("get_all_fs: Anfrage fehlgeschlagen: " . mysql_error());
       while($row = mysql_fetch_array($result)){
             $fsid		= $row['ID'];
@@ -197,6 +198,7 @@ if(isset($_POST['fsid'])){
             $email	= $row['email'];
             $telefon	= $row['telefon'];
             $adresse	= $row['adresse'];
+            $www		= $row['www'];
             $iban		= $row['iban'];
             
             echo '	<div class="panel panel-primary">
@@ -235,23 +237,45 @@ if(isset($_POST['fsid'])){
 			<div class="col-md-6">';
 		
 		
-		if(is_null($satzung)){
-			$satzung = '';
+		if(is_null($adresse)){
+			$adresse = '';
 		}
 		
 		echo '	<div class="input-group">
 					<span class="input-group-addon">';
-		if($satzung != ''){
-			echo '<a href="'.$satzung.'" title="Satzung aufrufen" target="_blank"><span class="glyphicon glyphicon-book"></span></a>';
+		if($adresse != ''){
+			echo '<a href="https://maps.google.de/maps?q='.$adresse.'" title="In Google Maps suchen" target="_blank"><span class="glyphicon glyphicon-home"></span></a>';
 		} else {
-			echo '<span class="glyphicon glyphicon-book"></span>';
+			echo '<span class="glyphicon glyphicon-home"></span>';
 		}
 		echo '</span>
-					<input type="text" class="form-control" placeholder="URL zur Satzung hier eingeben..." name="inputSatzung" value="'.$satzung.'">
+					<input type="text" class="form-control" placeholder="Adresse hier eingeben..." name="inputAddress" value="'.$adresse.'">
 				</div>
 		';
 		
 		echo '</div>
+		<div class="col-md-6">';
+		
+		if(is_null($www)){
+			$www = '';
+		}
+		
+		echo '	<div class="input-group">
+					<span class="input-group-addon">';
+		if($www != ''){
+			echo '<a href="'.$www.'" title="Homepage aufrufen" target="_blank"><span class="glyphicon glyphicon-globe"></span></a>';
+		} else {
+			echo '<span class="glyphicon glyphicon-globe"></span>';
+		}
+		echo '</span>
+					<input type="url" class="form-control" placeholder="URL zur Homepage hier eingeben..." name="inputWWW" value="'.$www.'">
+				</div>
+		';
+		
+		echo '</div>
+		</div>';
+		
+		echo '<div class="row">
 		<div class="col-md-6">';
 		
 		if(is_null($email)){
@@ -271,31 +295,7 @@ if(isset($_POST['fsid'])){
 		';
 		
 		echo '</div>
-		</div>';
-		
-		echo '<div class="row">
-			<div class="col-md-6">';
-		
-		if(is_null($adresse)){
-			$adresse = '';
-		}
-		
-		echo '	<div class="input-group">
-					<span class="input-group-addon">';
-		if($adresse != ''){
-			echo '<a href="https://maps.google.de/maps?q='.$adresse.'" title="In Google Maps suchen" target="_blank"><span class="glyphicon glyphicon-home"></span></a>';
-		} else {
-			echo '<span class="glyphicon glyphicon-home"></span>';
-		}
-		echo '</span>
-					<input type="text" class="form-control" placeholder="Adresse hier eingeben..." name="inputAddress" value="'.$adresse.'">
-				</div>
-		';
-		
-		
-		echo '</div>
 		<div class="col-md-6">';
-		
 
 		if(is_null($telefon)){
 			$telefon = '';
@@ -308,9 +308,32 @@ if(isset($_POST['fsid'])){
 		';
 		
 		echo '</div>
+		</div>';
+		
+		echo '<div class="row">
 		<div class="col-md-6">';
 		
-
+		
+		if(is_null($satzung)){
+			$satzung = '';
+		}
+		
+		echo '	<div class="input-group">
+					<span class="input-group-addon">';
+		if($satzung != ''){
+			echo '<a href="'.$satzung.'" title="Satzung aufrufen" target="_blank"><span class="glyphicon glyphicon-book"></span></a>';
+		} else {
+			echo '<span class="glyphicon glyphicon-book"></span>';
+		}
+		echo '</span>
+					<input type="text" class="form-control" placeholder="URL zur Satzung hier eingeben..." name="inputSatzung" value="'.$satzung.'">
+				</div>
+		';
+		
+		echo '</div>
+		<div class="col-md-6">';
+		
+		
 		if(is_null($iban)){
 			$iban = '';
 		}

@@ -193,22 +193,56 @@ if(file_exists($configfile)){
 			$lgi_8 = $lgi_ok;
 		}
 	}
+	
+	$www_error_occured = false;
+	// prüfen, ob www-Feld noch nicht existiert
+	if(!$www_error_occured){
+		$query = "SELECT * from INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '".$dbpref."fachschaften' AND COLUMN_NAME = 'www';";
+		$result = mysql_query($query);
+		if(!$result){
+			$stat_9 = $badge_error;
+			$lgi_9 = $lgi_error;
+			$error_occured = true;
+		} elseif(mysql_num_rows($result) > 0) {
+			$stat_9 = $badge_error;
+			$lgi_9 = $lgi_error;
+			$error_occured = true;
+		} else {
+			$stat_9 = $badge_ok;
+			$lgi_9 = $lgi_ok;
+		}
+	}
+	
+	// füge Feld für WWW ein
+	if(!$www_error_occured){
+		$query = "ALTER TABLE ".$dbpref."fachschaften 
+			ADD COLUMN 	www		VARCHAR(255)";
+		$result = mysql_query($query);
+		if(!$result){
+			$stat_10 = $badge_error;
+			$lgi_10 = $lgi_error;
+			$error_occured = true;
+		} else {
+			$stat_10 = $badge_ok;
+			$lgi_10 = $lgi_ok;
+		}
+	}
 
 /*
  * DB-Verbindung schließen
  */
 	if(isset($link) and $link){
 		if(mysql_close($link)){
-			$stat_10 = $badge_ok;
-			$lgi_10 = $lgi_ok;
+			$stat_11 = $badge_ok;
+			$lgi_11 = $lgi_ok;
 		} else {
-			$stat_10 = $badge_error;
-			$lgi_10 = $lgi_error;
+			$stat_11 = $badge_error;
+			$lgi_11 = $lgi_error;
 			$error_occured = true;
 		}
 	}
 
-	if($error_occured or $iban_error_occured){
+	if($error_occured or $iban_error_occured or $www_error_occured){
 		$lastmessage = "<p>Fehler sind aufgetreten.</p>\n<a class='btn btn-default' href='upgrade_fscontact.php'>Upgrade neu starten</a>";
 	}
 	
@@ -267,7 +301,9 @@ if(file_exists($configfile)){
 		<li class="list-group-item<?php echo $lgi_6; ?>">Füge Felder für E-Mail, Telefon und Adresse ein... <?php echo $stat_6; ?></li>
 		<li class="list-group-item<?php echo $lgi_7; ?>">Prüfe, ob 'iban'-Feld noch nicht existiert... <?php echo $stat_7; ?></li>
 		<li class="list-group-item<?php echo $lgi_8; ?>">Füge Feld für IBAN ein... <?php echo $stat_8; ?></li>
-		<li class="list-group-item<?php echo $lgi_10; ?>">Schließe Datenbankverbindung... <?php echo $stat_10; ?></li>
+		<li class="list-group-item<?php echo $lgi_9; ?>">Prüfe, ob 'www'-Feld noch nicht existiert... <?php echo $stat_9; ?></li>
+		<li class="list-group-item<?php echo $lgi_10; ?>">Füge Feld für WWW ein... <?php echo $stat_10; ?></li>
+		<li class="list-group-item<?php echo $lgi_11; ?>">Schließe Datenbankverbindung... <?php echo $stat_11; ?></li>
 		</ul>
 		
 		
