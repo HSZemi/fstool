@@ -26,7 +26,7 @@ Kontaktdaten der Fachschaften der RFWU Bonn
 $link = db_connect();
 
 
-$query = "SELECT ID, name, email, telefon, adresse FROM ".DB_PREF."fachschaften ORDER BY name ASC;";
+$query = "SELECT ID, name, email, telefon, adresse, www FROM ".DB_PREF."fachschaften ORDER BY name ASC;";
 $result = mysql_query($query) or die("get_all_fachschaften: Anfrage fehlgeschlagen: " . mysql_error());
 while($row = mysql_fetch_array($result)){
       $id		= $row['ID'];
@@ -34,12 +34,14 @@ while($row = mysql_fetch_array($result)){
       $email	= $row['email'];
       $telefon	= $row['telefon'];
       $adresse	= $row['adresse'];
+      $www		= $row['www'];
       
 	underline($name, '-');
 	
-	echo "  * __E-Mail-Adresse:__ ".$row['email']."\n";
-	echo "  * __Telefonnummer:__ ".$row['telefon']."\n";
-	echo "  * __Adresse:__ ".$row['adresse']."\n";
+	echo "  * __E-Mail-Adresse:__ $email\n";
+	echo "  * __Telefonnummer:__ $telefon\n";
+	echo "  * __Adresse:__ $adresse\n";
+	echo "  * __Webseite:__ $www\n";
 	echo "\n";
 
 }
