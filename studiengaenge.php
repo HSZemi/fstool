@@ -74,7 +74,8 @@ if(isset($_POST['id'])){
 } elseif(isset($_POST['createnewstudiengang'])){
 	// neuen Studiengang erstellen
 	$name = validate_string_for_mysql_html($_POST['inputStudiengangname']);
-	if(add_studiengang($name)){
+	$fullname = validate_string_for_mysql_html($_POST['inputStudiengangfullname']);
+	if(add_studiengang2($name, $fullname)){
 		$alert = "		<div class='alert alert-success alert-dismissable'>
 			<button type='button' class='close' data-dismiss='alert' aria-hidden='true'>&times;</button>
 			Neuer Studiengang <strong>$name</strong> wurde angelegt.

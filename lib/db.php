@@ -212,7 +212,7 @@ function add_studiengang($name){
 }
 
 function add_studiengang2($name, $fullname){
-	$query = "INSERT INTO ".DB_PREF."studiengaenge(name) VALUES ('$name', '$fullname')";
+	$query = "INSERT INTO ".DB_PREF."studiengaenge(name, fullname) VALUES ('$name', '$fullname')";
 	$result = mysql_query($query);
 	if($result){
 		return true;
