@@ -22,12 +22,12 @@ if(isset($_POST['fsid'])){
 		} else {
 			$alert = "		<div class='alert alert-danger alert-dismissable'>
 			<button type='button' class='close' data-dismiss='alert' aria-hidden='true'>&times;</button>
-			<strong>Fehler!</strong> Die Fachschaft mit der ID '$fsid' konnte nicht dem Studiengang mit der ID '$studiengang_id' zugeordnet werden. Besteht diese Zuordnung evtl. bereits?
+			<strong>Fehler!</strong> Die Fachschaft mit der ID '$fsid' konnte nicht der FAK mit der ID '$studiengang_id' zugeordnet werden. Besteht diese Zuordnung evtl. bereits?
 		</div>";
 		}
 		
 	} elseif(isset($_POST['rename'])) {
-		// Studiengang umbenennen
+		// FAK umbenennen
 		$newname = validate_string_for_mysql_html($_POST['inputNewname']);
 		if(rename_fs($fsid, $newname)){
 			$alert = "		<div class='alert alert-warning alert-dismissable'>
@@ -63,7 +63,7 @@ if(isset($_POST['fsid'])){
 		}
 		
 	} elseif(isset($_POST['delete'])){
-		// Studiengang löschen
+		// FAK löschen
 		if(delete_fs($fsid)){
 			$alert = "		<div class='alert alert-warning alert-dismissable'>
 			<button type='button' class='close' data-dismiss='alert' aria-hidden='true'>&times;</button>
@@ -72,11 +72,11 @@ if(isset($_POST['fsid'])){
 		} else {
 			$alert = "		<div class='alert alert-danger alert-dismissable'>
 			<button type='button' class='close' data-dismiss='alert' aria-hidden='true'>&times;</button>
-			<strong>Fehler!</strong> Die Fachschaft mit der ID '$fsid' konnte nicht gelöscht werden. Möglicherweise ist ihr noch ein Studiengang zugeordnet?
+			<strong>Fehler!</strong> Die Fachschaft mit der ID '$fsid' konnte nicht gelöscht werden. Möglicherweise ist ihr noch eine FAK zugeordnet?
 		</div>";
 		}
 	} elseif(isset($_POST['studiengang_to_delete'])){
-		// Studiengang entfernen
+		// FAK entfernen
 		$studiengang_id = intval($_POST['studiengang_to_delete']);
 		if(unjoin_fs_and_studiengang($fsid, $studiengang_id)){
 			$alert = "		<div class='alert alert-success alert-dismissable'>
@@ -86,7 +86,7 @@ if(isset($_POST['fsid'])){
 		} else {
 			$alert = "		<div class='alert alert-danger alert-dismissable'>
 			<button type='button' class='close' data-dismiss='alert' aria-hidden='true'>&times;</button>
-			<strong>Fehler!</strong> Die Zuordnung von der Fachschaft mit der ID '$fsid' zum Studiengang mit der ID '$studiengang_id' konnte nicht aufgehoben werden.
+			<strong>Fehler!</strong> Die Zuordnung von der Fachschaft mit der ID '$fsid' zur FAK mit der ID '$studiengang_id' konnte nicht aufgehoben werden.
 		</div>";
 		}
 	}
@@ -163,7 +163,7 @@ if(isset($_POST['fsid'])){
           <div class="navbar-collapse collapse">
             <ul class="nav navbar-nav">
               <li class="active"><a href="fachschaften.php">Fachschaften</a></li>
-              <li><a href="studiengaenge.php">Studiengänge</a></li>
+              <li><a href="studiengaenge.php"><abbr title='Fach-Abschluss-Kombinationen'>FAKs</abbr></a></li>
               <li><a href="probleme.php">Probleme</a></li>
             </ul>
             
@@ -217,13 +217,13 @@ if(isset($_POST['fsid'])){
             
             $studiengaenge = get_studiengaenge_for_fs($fsid);
 		if(!$studiengaenge){
-		echo '<a class="list-group-item list-group-item-warning"">Diese Fachschaft vertritt keinen Studiengang.</a>
+		echo '<a class="list-group-item list-group-item-warning"">Diese Fachschaft vertritt keine FAK.</a>
 		';
 		} else {
-			echo '<a class="list-group-item list-group-item-success"><b>Studiengänge</b></a>
+			echo '<a class="list-group-item list-group-item-success"><b>FAKs</b></a>
 			';
 			foreach($studiengaenge as $row){
-				echo '<a class="list-group-item" href="studiengaenge.php#'.$row['ID'].'">'.$row['name'].' <button class="close" type="submit" name="studiengang_to_delete" value="'.$row['ID'].'" title="Diesen Studiengang entfernen">&times;</button></a>
+				echo '<a class="list-group-item" href="studiengaenge.php#'.$row['ID'].'">'.$row['name'].' <button class="close" type="submit" name="studiengang_to_delete" value="'.$row['ID'].'" title="Diese FAK entfernen">&times;</button></a>
 				';
 			}
 		}

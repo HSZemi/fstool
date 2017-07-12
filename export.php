@@ -59,7 +59,7 @@
           <div class="navbar-collapse collapse">
             <ul class="nav navbar-nav">
               <li><a href="fachschaften.php">Fachschaften</a></li>
-              <li><a href="studiengaenge.php">Studiengänge</a></li>
+              <li><a href="studiengaenge.php"><abbr title='Fach-Abschluss-Kombinationen'>FAKs</abbr></a></li>
               <li><a href="probleme.php">Probleme</a></li>
             </ul>
 			
@@ -82,7 +82,7 @@
 				<li><a href="fachschaften-contact-md.php" target="_blank">Kontaktdaten Markdown</a></li>
 			</ul>
 			
-			<h4>Liste der Fachschaften <small>(mit Studiengängen)</small></h4>
+			<h4>Liste der Fachschaften <small>(mit <abbr title='Fach-Abschluss-Kombinationen'>FAKs</abbr>)</small></h4>
 			<ul>
 				<li><a href="fachschaften-plain.php" target="_blank">Fachschaften plain</a></li>
 				<li><a href="fachschaften-plain.php?fullnames" target="_blank"><b>Fachschaften plain (fullnames)</b></a></li>
@@ -90,12 +90,12 @@
 				<li><a href="fachschaften-md.php?fullnames">Fachschaften Markdown (fullnames)</a></li>
 			</ul>
 			
-			<h4>Liste der Studiengänge <small>(mit Fachschaften)</small></h4>
+			<h4>Liste der <abbr title='Fach-Abschluss-Kombinationen'>FAKs</abbr> <small>(mit Fachschaften)</small></h4>
 			<ul>
-				<li><a href="studiengaenge-plain.php" target="_blank">Studiengänge plain</a></li>
-				<li><a href="studiengaenge-plain.php?fullnames" target="_blank">Studiengänge plain (fullnames)</a></li>
-				<li><a href="studiengaenge-md.php">Studiengänge Markdown</a></li>
-				<li><a href="studiengaenge-md.php?fullnames">Studiengänge Markdown (fullnames)</a></li>
+				<li><a href="studiengaenge-plain.php" target="_blank"><abbr title='Fach-Abschluss-Kombinationen'>FAKs</abbr> plain</a></li>
+				<li><a href="studiengaenge-plain.php?fullnames" target="_blank"><abbr title='Fach-Abschluss-Kombinationen'>FAKs</abbr> plain (fullnames)</a></li>
+				<li><a href="studiengaenge-md.php"><abbr title='Fach-Abschluss-Kombinationen'>FAKs</abbr> Markdown</a></li>
+				<li><a href="studiengaenge-md.php?fullnames"><abbr title='Fach-Abschluss-Kombinationen'>FAKs</abbr> Markdown (fullnames)</a></li>
 			</ul>
 		</div>
 	</div>

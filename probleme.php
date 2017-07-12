@@ -65,7 +65,7 @@ include 'lib/db.php';
           <div class="navbar-collapse collapse">
             <ul class="nav navbar-nav">
               <li><a href="fachschaften.php">Fachschaften</a></li>
-              <li><a href="studiengaenge.php">Studiengänge</a></li>
+              <li><a href="studiengaenge.php"><abbr title='Fach-Abschluss-Kombinationen'>FAKs</abbr></a></li>
               <li class="active"><a href="probleme.php">Probleme</a></li>
             </ul>
 			
@@ -82,7 +82,7 @@ include 'lib/db.php';
       
       <div class="panel panel-primary">
 		<div class="panel-heading">
-			<h3 class="panel-title">Fachschaften ohne Studiengang</h3>
+			<h3 class="panel-title">Fachschaften ohne <abbr title='Fach-Abschluss-Kombination'>FAK</abbr></h3>
 		</div>
 		<div class="panel-body">
 			<div class="list-group">
@@ -106,7 +106,7 @@ include 'lib/db.php';
 	
       <div class="panel panel-primary">
 		<div class="panel-heading">
-			<h3 class="panel-title">Studiengänge ohne Fachschaft</h3>
+			<h3 class="panel-title"><abbr title='Fach-Abschluss-Kombinationen'>FAKs</abbr> ohne Fachschaft</h3>
 		</div>
 		<div class="panel-body">
 			<div class="list-group">
@@ -130,7 +130,7 @@ include 'lib/db.php';
 	
       <div class="panel panel-primary">
 		<div class="panel-heading">
-			<h3 class="panel-title">Studiengänge mit mehr als einer Fachschaft</h3>
+			<h3 class="panel-title"><abbr title='Fach-Abschluss-Kombinationen'>FAKs</abbr> mit mehr als einer Fachschaft</h3>
 		</div>
 		<div class="panel-body">
 			<div class="list-group">

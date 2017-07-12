@@ -208,7 +208,7 @@ $success = Array();
 
 $link = db_connect();
 
-// alle ungenutzten Studiengänge löschen
+// alle ungenutzten FAKs löschen
 $query = "DELETE FROM fstool_studiengaenge WHERE ID NOT IN (SELECT studiengang FROM fstool_zuordnung);";
 $truncate_success = mysql_query($query);
 	
@@ -277,7 +277,7 @@ if(isset($link) and $link){
 	<div class="jumbotron">
 	
 	
-		<h1>fstool - Installation <small>Studiengänge</small></h1>
+		<h1>fstool - Installation <small><abbr title='Fach-Abschluss-Kombinationen'>FAKs</abbr></small></h1>
 		
 		<ul class="list-group">
 		<?php 

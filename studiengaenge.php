@@ -18,42 +18,42 @@ if(isset($_POST['id'])){
 		if(assign_fs_to_studiengang($fsid, $studiengang_id)){
 			$alert = "		<div class='alert alert-success alert-dismissable'>
 			<button type='button' class='close' data-dismiss='alert' aria-hidden='true'>&times;</button>
-			Der Studiengang wurde erfolgreich zugeordnet.
+			Die FAK wurde erfolgreich zugeordnet.
 		</div>";
 		} else {
 			$alert = "		<div class='alert alert-danger alert-dismissable'>
 			<button type='button' class='close' data-dismiss='alert' aria-hidden='true'>&times;</button>
-			<strong>Fehler!</strong> Der Studiengang mit der ID '$studiengang_id' konnte nicht der Fachschaft mit der ID '$fsid' zugeordnet werden. Besteht diese Zuordnung evtl. bereits?
+			<strong>Fehler!</strong> Die FAK mit der ID '$studiengang_id' konnte nicht der Fachschaft mit der ID '$fsid' zugeordnet werden. Besteht diese Zuordnung evtl. bereits?
 		</div>";
 		}
 		
 	} elseif(isset($_POST['rename'])) {
-		// Studiengang umbenennen
+		// FAK umbenennen
 		$newname = validate_string_for_mysql_html($_POST['inputNewname']);
 		$newfullname = validate_string_for_mysql_html($_POST['inputNewfullname']);
 		if(rename_studiengang2($studiengang_id, $newname, $newfullname)){
 			$alert = "		<div class='alert alert-warning alert-dismissable'>
 			<button type='button' class='close' data-dismiss='alert' aria-hidden='true'>&times;</button>
-			Der Studiengang wurde in <strong>$newname/$newfullname</strong> umbenannt.
+			Die FAK wurde in <strong>$newname/$newfullname</strong> umbenannt.
 		</div>";
 		} else {
 			$alert = "		<div class='alert alert-danger alert-dismissable'>
 			<button type='button' class='close' data-dismiss='alert' aria-hidden='true'>&times;</button>
-			<strong>Fehler!</strong> Der Studiengang konnte nicht in '$newname/$newfullname' umbenannt werden. Eventuell existiert bereits ein Studiengang mit diesem Namen?
+			<strong>Fehler!</strong> Die FAK konnte nicht in '$newname/$newfullname' umbenannt werden. Eventuell existiert bereits eine FAK mit diesem Namen?
 		</div>";
 		}
 		
 	} elseif(isset($_POST['delete'])){
-		// Studiengang löschen
+		// FAK löschen
 		if(delete_studiengang($studiengang_id)){
 			$alert = "		<div class='alert alert-warning alert-dismissable'>
 			<button type='button' class='close' data-dismiss='alert' aria-hidden='true'>&times;</button>
-			Der Studiengang mit der ID <strong>$studiengang_id</strong> wurde gelöscht.
+			Die FAK mit der ID <strong>$studiengang_id</strong> wurde gelöscht.
 		</div>";
 		} else {
 			$alert = "		<div class='alert alert-danger alert-dismissable'>
 			<button type='button' class='close' data-dismiss='alert' aria-hidden='true'>&times;</button>
-			<strong>Fehler!</strong> Der Studiengang mit der ID '$studiengang_id' konnte nicht gelöscht werden. Möglicherweise ist er noch einer Fachschaft zugeordnet?
+			<strong>Fehler!</strong> Die FAK mit der ID '$studiengang_id' konnte nicht gelöscht werden. Möglicherweise ist sie noch einer Fachschaft zugeordnet?
 		</div>";
 		}
 	} elseif(isset($_POST['fs_to_delete'])){
@@ -67,7 +67,7 @@ if(isset($_POST['id'])){
 		} else {
 			$alert = "		<div class='alert alert-danger alert-dismissable'>
 			<button type='button' class='close' data-dismiss='alert' aria-hidden='true'>&times;</button>
-			<strong>Fehler!</strong> Die Zuordnung vom Studiengang mit der ID '$studiengang_id' zur Fachschaft mit der ID '$fsid' konnte nicht aufgehoben werden.
+			<strong>Fehler!</strong> Die Zuordnung der FAK mit der ID '$studiengang_id' zur Fachschaft mit der ID '$fsid' konnte nicht aufgehoben werden.
 		</div>";
 		}
 	}
@@ -78,12 +78,12 @@ if(isset($_POST['id'])){
 	if(add_studiengang2($name, $fullname)){
 		$alert = "		<div class='alert alert-success alert-dismissable'>
 			<button type='button' class='close' data-dismiss='alert' aria-hidden='true'>&times;</button>
-			Neuer Studiengang <strong>$name</strong> wurde angelegt.
+			Neue FAK <strong>$name</strong> wurde angelegt.
 		</div>";
 	} else {
 		$alert = "		<div class='alert alert-danger alert-dismissable'>
 			<button type='button' class='close' data-dismiss='alert' aria-hidden='true'>&times;</button>
-			<strong>Fehler!</strong> Studiengang '$name' konnte nicht angelegt werden. Möglicherweise existiert bereits ein Studiengang mit diesem Namen?
+			<strong>Fehler!</strong> FAK '$name' konnte nicht angelegt werden. Möglicherweise existiert bereits eine FAK mit diesem Namen?
 		</div>";
 	}
 }
@@ -95,7 +95,7 @@ if(isset($_POST['id'])){
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<title>fstool - Studiengänge</title>
+	<title>fstool - FAKs</title>
 
 	<!-- Bootstrap -->
 	<link href="css/bootstrap.min.css" rel="stylesheet">
@@ -151,7 +151,7 @@ if(isset($_POST['id'])){
           <div class="navbar-collapse collapse">
             <ul class="nav navbar-nav">
               <li><a href="fachschaften.php">Fachschaften</a></li>
-              <li class="active"><a href="studiengaenge.php">Studiengänge</a></li>
+              <li class="active"><a href="studiengaenge.php"><abbr title='Fach-Abschluss-Kombinationen'>FAKs</abbr></a></li>
               <li><a href="probleme.php">Probleme</a></li>
             </ul>
             
@@ -202,7 +202,7 @@ if(isset($_POST['id'])){
             
             $fsen = get_fs_for_studiengang($id);
 		if(!$fsen){
-		echo '<a class="list-group-item list-group-item-warning"">Dieser Studiengang ist keiner Fachschaft zugeordnet.</a>
+		echo '<a class="list-group-item list-group-item-warning"">Diese FAK ist keiner Fachschaft zugeordnet.</a>
 		';
 		} else {
 			echo '<a class="list-group-item list-group-item-info"><b>Fachschaft</b></a>
@@ -235,7 +235,7 @@ if(isset($_POST['id'])){
 					</span>
 				</div><!-- /input-group -->
 			</div>
-			<button type="submit" class="btn btn-danger" name="delete">Studiengang Löschen</button>
+			<button type="submit" class="btn btn-danger" name="delete">FAK Löschen</button>
 		</form>
 		</div>
 		

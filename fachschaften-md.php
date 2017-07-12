@@ -22,7 +22,7 @@ header("Content-Disposition: attachment; filename=fachschaften-2014.md");
 
 ?>
 
-Liste der Fachschaften der RFWU Bonn mit zugeordneten Studiengängen
+Liste der Fachschaften der RFWU Bonn mit zugeordneten FAKs
 ===================================================================
 
 
@@ -41,7 +41,7 @@ while($row = mysql_fetch_array($result)){
 	
 	$fsen = get_studiengaenge_for_fs($id);
 	if(!$fsen){
-		echo "Diese Fachschaft vertritt keinen Studiengang.\n\n";
+		echo "Diese Fachschaft vertritt keine FAK.\n\n";
 	} else {
 		foreach($fsen as $row){
 			if($fullnames){

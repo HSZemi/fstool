@@ -75,7 +75,7 @@ if($row = mysql_fetch_array($result)){
           <div class="navbar-collapse collapse">
             <ul class="nav navbar-nav">
               <li><a href="fachschaften.php">Fachschaften</a></li>
-              <li><a href="studiengaenge.php">Studiengänge</a></li>
+              <li><a href="studiengaenge.php"><abbr title="Fach-Abschluss-Kombinationen">FAKs</abbr></a></li>
               <li><a href="probleme.php">Probleme</a></li>
             </ul>
 			
@@ -98,9 +98,7 @@ if($row = mysql_fetch_array($result)){
 		<div id="alert"></div>
 
        
-		<?php echo "<p>Derzeit sind <a href='fachschaften.php' class='btn btn-info'><span class='badge'>$fs_count</span> Fachschaften</a> und <a href='studiengaenge.php' class='btn btn-success'><span class='badge'>$studiengaenge_count</span> Studiengänge</a> eingetragen.</p>"; ?>
-		
-		<p><small>(„Studiengang“ bezeichnet hier eine Fach-Abschluss-Kombination.)</small></p>
+		<?php echo "<p>Derzeit sind <a href='fachschaften.php' class='btn btn-info'><span class='badge'>$fs_count</span> Fachschaften</a> und <a href='studiengaenge.php' class='btn btn-success'><span class='badge'>$studiengaenge_count</span> <abbr title='Fach-Abschluss-Kombinationen'>FAKs</abbr></a> eingetragen.</p>"; ?>
 
 	</div>
 

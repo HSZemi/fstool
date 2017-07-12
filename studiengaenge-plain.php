@@ -19,7 +19,7 @@ if(isset($_GET['fullnames'])){
   </head>
   <body>
   
-<h1>Liste der Studiengänge der RFWU Bonn mit zugeordneten Fachschaften</h1>
+<h1>Liste der <abbr title='Fach-Abschluss-Kombinationen'>FAKs</abbr> der RFWU Bonn mit zugeordneten Fachschaften</h1>
 
 
 <?php
@@ -42,7 +42,7 @@ while($row = mysql_fetch_array($result)){
 	
 	$fsen = get_fs_for_studiengang($id);
 	if(!$fsen){
-		echo "<li>Dieser Studiengang ist keiner Fachschaft zugeordnet.</li>\n";
+		echo "<li>Diese FAK ist keiner Fachschaft zugeordnet.</li>\n";
 	} else {
 		foreach($fsen as $row){
 			echo "<li>".$row['name']."</li>\n";

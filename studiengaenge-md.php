@@ -18,12 +18,12 @@ function underline($string, $char){
 }
 
 header("Content-Type: text/plain");
-header("Content-Disposition: attachment; filename=studiengaenge-2014.md");
+header("Content-Disposition: attachment; filename=studiengaenge-2017.md");
 
 ?>
 
-Liste der Studiengänge der RFWU Bonn mit zugeordneten Fachschaften
-==================================================================
+Liste der FAKs der RFWU Bonn mit zugeordneten Fachschaften
+==========================================================
 
 
 <?php
@@ -46,7 +46,7 @@ while($row = mysql_fetch_array($result)){
 	
 	$fsen = get_fs_for_studiengang($id);
 	if(!$fsen){
-		echo "Dieser Studiengang ist keiner Fachschaft zugeordnet.\n\n";
+		echo "Diese FAK ist keiner Fachschaft zugeordnet.\n\n";
 	} else {
 		foreach($fsen as $row){
 			echo "  * ".$row['name']."\n";

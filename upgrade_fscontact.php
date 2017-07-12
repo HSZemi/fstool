@@ -19,7 +19,7 @@ $lgi_ok = ' list-group-item-success';
 $lgi_error = ' list-group-item-danger';
 $error_occured = false;
 $lastmessage = '<p>fstool wurde erfolgreich installiert. Du kannst jetzt <a href="fachschaften.php">loslegen</a>!</p>
-<p><a href="install_studiengaenge.php" class="btn btn-default">Studiengänge installieren</a> <a href="install_fachschaften.php" class="btn btn-default">Fachschaften installieren</a></p>';
+<p><a href="install_studiengaenge.php" class="btn btn-default">FAKs installieren</a> <a href="install_fachschaften.php" class="btn btn-default">Fachschaften installieren</a></p>';
 
 if(file_exists($configfile)){
 	include 'lib/config.php';

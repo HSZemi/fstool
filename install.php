@@ -19,7 +19,7 @@ $lgi_ok = ' list-group-item-success';
 $lgi_error = ' list-group-item-danger';
 $error_occured = false;
 $lastmessage = '<p>fstool wurde erfolgreich installiert. Du kannst jetzt <a href="fachschaften.php">loslegen</a>!</p>
-<p><a href="install_studiengaenge.php" class="btn btn-default">Studiengänge installieren</a> <a href="install_fachschaften.php" class="btn btn-default">Fachschaften installieren</a></p>';
+<p><a href="install_studiengaenge.php" class="btn btn-default"><abbr title="Fach-Abschluss-Kombinationen">FAKs</abbr> installieren</a> <a href="install_fachschaften.php" class="btn btn-default">Fachschaften installieren</a></p>';
 
 if(file_exists($configfile)){
 	include 'lib/config.php';
@@ -351,7 +351,7 @@ if(isset($_POST['dbname']) and isset($_POST['dbuser']) and isset($_POST['dbpass'
 		<li class="list-group-item<?php echo $lgi_2; ?>">Stelle Verbindung zur Datenbank her... <?php echo $stat_2; ?></li>
 		<li class="list-group-item<?php echo $lgi_3; ?>">Lösche vorhandene Tabellen... <?php echo $stat_3; ?></li>
 		<li class="list-group-item<?php echo $lgi_4; ?>">Lege Tabelle der Fachschaften an... <?php echo $stat_4; ?></li>
-		<li class="list-group-item<?php echo $lgi_5; ?>">Lege Tabelle der Studiengänge an... <?php echo $stat_5; ?></li>
+		<li class="list-group-item<?php echo $lgi_5; ?>">Lege Tabelle der FAKs an... <?php echo $stat_5; ?></li>
 		<li class="list-group-item<?php echo $lgi_6; ?>">Lege Zuordnungstabelle an... <?php echo $stat_6; ?></li>
 		<li class="list-group-item<?php echo $lgi_7; ?>">Schließe Datenbankverbindung... <?php echo $stat_7; ?></li>
 		</ul>
